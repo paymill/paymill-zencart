@@ -36,24 +36,26 @@ class FastCheckout
     
     public function saveCcIds($userId, $newClientId, $newPaymentId)
     {
+        global $db;
         if ($this->_canUpdate($userId)) {
             $sql = "UPDATE `pi_paymill_fastcheckout`SET `paymentID_CC` = '$newPaymentId' WHERE `userID` = '$userId'";
         } else {
             $sql = "INSERT INTO `pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_CC`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
         }
 
-        zen_db_query($sql);
+        $db->Execute($sql);
     }
     
     public function saveElvIds($userId, $newClientId, $newPaymentId)
     {   
+        global $db;
         if ($this->_canUpdate($userId)) {
             $sql = "UPDATE `pi_paymill_fastcheckout`SET `paymentID_ELV` = '$newPaymentId' WHERE `userID` = '$userId'";
         } else {
             $sql = "INSERT INTO `pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_ELV`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
         }
         
-       zen_db_query($sql);
+       $db->Execute($sql);
     }
     
     private function _canUpdate($userId)
@@ -64,9 +66,12 @@ class FastCheckout
     
     public function loadFastCheckoutData($userId)
     {
+        global $db;
         $sql = "SELECT * FROM `pi_paymill_fastcheckout` WHERE `userID` = '$userId'";
         
-        return zen_db_fetch_array(zen_db_query($sql));
+        $fastCheckout = $db->Execute($sql);
+        
+        return $fastCheckout->fields;
     }
     
     public function hasElvPaymentId($userId)

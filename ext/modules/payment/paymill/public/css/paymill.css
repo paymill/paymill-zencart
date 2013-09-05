@@ -37,34 +37,81 @@
 .form-row-paymill
 {
     width: 250px;
+    height: 18px;
+}
+
+.paymill-label-field
+{
+    width: 120px;
 }
 
 #paymill-card-expiry-month
 {
     width: 160px;
+    height: 18px;
 }
 
 #paymill-card-expiry-year
 {
     width: 90px;
+    height: 18px;
 }
 
-.payment-error
+.paymill-error
 {
-    padding:2px 4px;
-    margin:0px;
-    border:solid 1px #FBD3C6;
-    background:#FDE4E1;
-    color:#CB4721;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:14px;
-    font-weight:bold;
-    text-align:center;
+    margin-top: 5px;
+    padding: 2px 4px;
+    border: solid 1px #FBD3C6;
+    background: #FDE4E1;
+    color: #CB4721;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
     display: none;
 }
 
-.card-icon
+.number-extra-field
 {
-    margin-left: 5px;
-    position: absolute;
+    width: 500px;
+}
+
+.paymill-card-number-visa
+{
+    background: url('../images/32x20_visa.png') no-repeat center right;
+}
+
+.paymill-card-number-mastercard
+{
+    background: url('../images/32x20_mastercard.png') no-repeat center right;
+}
+
+.paymill-card-number-amex
+{
+    background: url('../images/32x20_amex.png') no-repeat center right;
+}
+
+.paymill-card-number-jcb
+{
+    background: url('../images/32x20_jcb.png') no-repeat center right;
+}
+
+.paymill-card-number-maestro
+{
+    background: url('../images/32x20_maestro.png') no-repeat center right;
+}
+
+.paymill-card-number-carte-bleue
+{
+    background: url('../images/32x20_unionpay.png') no-repeat center right;
+}
+
+.paymill-card-number-diners
+{
+    background: url('../images/32x20_dinersclub.png') no-repeat center right;
+}
+
+.paymill-card-number-discover
+{
+    background: url('../images/32x20_discover.png') no-repeat center right;
 }

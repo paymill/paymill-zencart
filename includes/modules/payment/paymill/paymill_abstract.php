@@ -9,7 +9,7 @@ require_once(DIR_FS_CATALOG . 'ext/modules/payment/paymill/FastCheckout.php');
 /**
  * Paymill payment plugin
  */
-class paymill_abstract implements Services_Paymill_LoggingInterface
+class paymill_abstract extends base  implements Services_Paymill_LoggingInterface
 {
 
     var $code, $title, $description = '', $enabled, $privateKey, $logging, $fastCheckoutFlag, $label;
@@ -48,11 +48,11 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
     
     function update_status()
     {
-        global $order;
+        global $order, $db;
 
-        if (get_class($this) == 'paymill_cc') {
+        if (get_class($this) == 'paymillCc') {
             $zone_id = MODULE_PAYMENT_PAYMILL_CC_ZONE;
-        } elseif (get_class($this) == 'paymill_elv') {
+        } elseif (get_class($this) == 'paymillElv') {
             $zone_id = MODULE_PAYMENT_PAYMILL_ELV_ZONE;
         } else {
             $zone_id = 0;
@@ -61,15 +61,17 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
         if (($this->enabled == true) && ((int) $zone_id > 0)) {
             $check_flag = false;
 
-            $check_query = zen_db_query("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . (int) $zone_id . "' and zone_country_id = '" . $order->billing['country']['id'] . "' order by zone_id");
-            while ($check = zen_db_fetch_array($check_query)) {
-                if ($check['zone_id'] < 1) {
+            $check_query = $db->Execute("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . (int) $zone_id . "' and zone_country_id = '" . $order->billing['country']['id'] . "' order by zone_id");
+            while (!$check_query->EOF) {
+                if ($check_query->fields['zone_id'] < 1) {
                     $check_flag = true;
                     break;
-                } elseif ($check['zone_id'] == $order->billing['zone_id']) {
+                } elseif ($check_query->fields['zone_id'] == $order->billing['zone_id']) {
                     $check_flag = true;
                     break;
                 }
+                
+                $check_query->MoveNext();
             }
 
             if ($check_flag == false) {
@@ -80,11 +82,7 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
 
     function pre_confirmation_check()
     {
-        global $oscTemplate;
-
-        $oscTemplate->addBlock('<link rel="stylesheet" type="text/css" href="ext/modules/payment/paymill/public/css/paymill.css" />', 'header_tags');
-        $oscTemplate->addBlock('<script type="text/javascript">var PAYMILL_PUBLIC_KEY = "' . $this->publicKey . '";</script>', 'header_tags');
-        $oscTemplate->addBlock('<script type="text/javascript" src="' . $this->bridgeUrl . '"></script>', 'header_tags');
+        return false;
     }
 
     function get_error()
@@ -121,7 +119,24 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
 
     function confirmation()
     {
-        return false;
+        global $order;
+        $_SESSION['paymill']['amount'] = $this->format_raw($order->info['total']);
+        return array(
+            'fields' => array(
+                array(
+                    'title' => '',
+                    'field' => '<link rel="stylesheet" type="text/css" href="ext/modules/payment/paymill/public/css/paymill.css" />'
+                ),
+                array(
+                    'title' => '',
+                    'field' => '<script type="text/javascript">var PAYMILL_PUBLIC_KEY = "' . $this->publicKey . '";</script>'
+                ),
+                array(
+                    'title' => '',
+                    'field' => '<script type="text/javascript" src="' . $this->bridgeUrl . '"></script>'
+                ),
+            )
+        );
     }
 
     function process_button()
@@ -142,7 +157,7 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
         $this->paymentProcessor->setPrivateKey((string) $this->privateKey);
         $this->paymentProcessor->setToken((string) $_POST['paymill_token']);
         $this->paymentProcessor->setLogger($this);
-        $this->paymentProcessor->setSource($this->version . '_OSCOM_' . zen_get_version());
+        $this->paymentProcessor->setSource($this->version . '_ZENCART_');
 
         $this->fastCheckout->setFastCheckoutFlag($this->fastCheckoutFlag);
         
@@ -188,14 +203,14 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
     
     function fastCheckout()
     {
-        if ($this->fastCheckout->canCustomerFastCheckoutCc($_SESSION['customer_id']) && $this->code === 'paymill_cc') {
+        if ($this->fastCheckout->canCustomerFastCheckoutCc($_SESSION['customer_id']) && $this->code === 'paymillCc') {
             $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
             if (!empty($data['paymentID_CC'])) {
                 $this->paymentProcessor->setPaymentId($data['paymentID_CC']);
             }
         }
         
-        if ($this->fastCheckout->canCustomerFastCheckoutElv($_SESSION['customer_id']) && $this->code === 'paymill_elv') {
+        if ($this->fastCheckout->canCustomerFastCheckoutElv($_SESSION['customer_id']) && $this->code === 'paymillElv') {
             $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
             
             if (!empty($data['paymentID_ELV'])) {
@@ -206,13 +221,13 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
 
     function savePayment()
     {
-        if ($this->code === 'paymill_cc') {
+        if ($this->code === 'paymillCc') {
             $this->fastCheckout->saveCcIds(
                 $_SESSION['customer_id'], $this->paymentProcessor->getClientId(), $this->paymentProcessor->getPaymentId()
             );
         }
 
-        if ($this->code === 'paymill_elv') {
+        if ($this->code === 'paymillElv') {
             $this->fastCheckout->saveElvIds(
                 $_SESSION['customer_id'], $this->paymentProcessor->getClientId(), $this->paymentProcessor->getPaymentId()
             );
@@ -221,13 +236,13 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
     
     function saveClient()
     {
-        if ($this->code === 'paymill_cc') {
+        if ($this->code === 'paymillCc') {
             $this->fastCheckout->saveCcIds(
                 $_SESSION['customer_id'], $this->paymentProcessor->getClientId(), ''
             );
         }
 
-        if ($this->code === 'paymill_elv') {
+        if ($this->code === 'paymillElv') {
             $this->fastCheckout->saveElvIds(
                 $_SESSION['customer_id'], $this->paymentProcessor->getClientId(), ''
             );
@@ -238,9 +253,9 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
     {
         global $order, $insert_id;
 
-        if (get_class($this) == 'paymill_cc') {
+        if (get_class($this) == 'paymillCc') {
             $order_status_id = MODULE_PAYMENT_PAYMILL_CC_TRANSACTION_ORDER_STATUS_ID;
-        } elseif (get_class($this) == 'paymill_elv') {
+        } elseif (get_class($this) == 'paymillElv') {
             $order_status_id = MODULE_PAYMENT_PAYMILL_ELV_TRANSACTION_ORDER_STATUS_ID;
         } else {
             $order_status_id = $order->info['order_status'];
@@ -259,33 +274,32 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
 
     function remove()
     {
-        zen_db_query("DELETE FROM " . TABLE_CONFIGURATION . " WHERE configuration_key IN ('" . implode("', '", $this->keys()) . "')");
+        global $db;
+        $db->Execute("DELETE FROM " . TABLE_CONFIGURATION . " WHERE configuration_key IN ('" . implode("', '", $this->keys()) . "')");
     }
 
     function getOrderStatusTransactionID()
     {
-        $check_query = zen_db_query("select orders_status_id from " . TABLE_ORDERS_STATUS . " where orders_status_name = 'Paymill [Transactions]' limit 1");
+        global $db;
+        $check_query = $db->Execute("select orders_status_id from " . TABLE_ORDERS_STATUS . " where orders_status_name = 'Paymill [Transactions]' limit 1");
 
-        if (zen_db_num_rows($check_query) < 1) {
-            $status_query = zen_db_query("select max(orders_status_id) as status_id from " . TABLE_ORDERS_STATUS);
-            $status = zen_db_fetch_array($status_query);
+        if ($check_query->RecordCount() < 1) {
+            $status_query = $db->Execute("select max(orders_status_id) as status_id from " . TABLE_ORDERS_STATUS);
 
-            $status_id = $status['status_id'] + 1;
+            $status_id = $status_query->fields['status_id'] + 1;
 
             $languages = zen_get_languages();
 
             foreach ($languages as $lang) {
-                zen_db_query("insert into " . TABLE_ORDERS_STATUS . " (orders_status_id, language_id, orders_status_name) values ('" . $status_id . "', '" . $lang['id'] . "', 'Paymill [Transactions]')");
+                $db->Execute("insert into " . TABLE_ORDERS_STATUS . " (orders_status_id, language_id, orders_status_name) values ('" . $status_id . "', '" . $lang['id'] . "', 'Paymill [Transactions]')");
             }
 
-            $flags_query = zen_db_query("describe " . TABLE_ORDERS_STATUS . " public_flag");
-            if (zen_db_num_rows($flags_query) == 1) {
-                zen_db_query("update " . TABLE_ORDERS_STATUS . " set public_flag = 0 and downloads_flag = 0 where orders_status_id = '" . $status_id . "'");
+            $flags_query = $db->Execute("describe " . TABLE_ORDERS_STATUS . " public_flag");
+            if ($flags_query->RecordCount() == 1) {
+                $db->Execute("update " . TABLE_ORDERS_STATUS . " set public_flag = 0 and downloads_flag = 0 where orders_status_id = '" . $status_id . "'");
             }
         } else {
-            $check = zen_db_fetch_array($check_query);
-
-            $status_id = $check['orders_status_id'];
+            $status_id = $check_query->fields['orders_status_id'];
         }
 
         return $status_id;
@@ -293,35 +307,32 @@ class paymill_abstract implements Services_Paymill_LoggingInterface
 
     function log($messageInfo, $debugInfo)
     {
+        global $db;
         if ($this->logging) {
-            $logfile = dirname(__FILE__) . '/log.txt';
-            if (file_exists($logfile) && is_writable($logfile)) {
-                $handle = fopen($logfile, 'a');
-                fwrite($handle, "[" . date(DATE_RFC822) . "] " . $messageInfo . "\n");
-                fwrite($handle, "[" . date(DATE_RFC822) . "] " . $debugInfo . "\n");
-                fclose($handle);
-            }
+            $db->Execute("INSERT INTO `pi_paymill_logging` (debug, message) VALUES('" . zen_db_input($debugInfo) . "', '" . zen_db_input($messageInfo) . "')");
         }
     }
 
-    function format_raw($number, $currency_code = '', $currency_value = '')
+    function format_raw($number)
     {
-        global $currencies, $currency;
-
-        if (empty($currency_code) || !$currencies->is_set($currency_code)) {
-            $currency_code = $currency;
-        }
-
-        if (empty($currency_value) || !is_numeric($currency_value)) {
-            $currency_value = $currencies->currencies[$currency_code]['value'];
-        }
-
-        return number_format(zen_round($number * $currency_value, $currencies->currencies[$currency_code]['decimal_places']), $currencies->currencies[$currency_code]['decimal_places'], '', '');
+        return number_format(round($number, 2), 2, '', '');
     }
+
 
     function install()
     {
-        zen_db_query(
+        global $db;
+        $db->Execute(
+            "CREATE TABLE IF NOT EXISTS `pi_paymill_logging` ("
+          . "`id` int(11) NOT NULL AUTO_INCREMENT,"
+          . "`debug` text NOT NULL,"
+          . "`message` text NOT NULL,"
+          . "`date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+          . "PRIMARY KEY (`id`)"
+        . ") AUTO_INCREMENT=1"
+        );
+        
+        $db->Execute(
             "CREATE TABLE IF NOT EXISTS `pi_paymill_fastcheckout` ("
            . "`userID` varchar(100),"
            . "`clientID` varchar(100),"
