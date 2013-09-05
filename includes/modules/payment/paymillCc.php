@@ -90,7 +90,7 @@ class paymillCc extends paymill_abstract
     function confirmation()
     {
         global $order;
-
+        
         $confirmation = parent::confirmation();        
         
         $months_array     = array();
@@ -198,6 +198,8 @@ class paymillCc extends paymill_abstract
         global $db;
 
         parent::install();
+        
+        include(DIR_FS_CATALOG . DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/payment/paymillCc.php');
         
         $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_CC_STATUS_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_STATUS_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_STATUS', 'True', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
         $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
