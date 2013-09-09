@@ -9,7 +9,7 @@ class paymillCc extends paymill_abstract
         parent::paymill_abstract();
         global $order;
         $this->code = 'paymillCc';
-        $this->version = '1.2.1';
+        $this->version = '1.0.0';
         $this->api_version = '2';
         $this->title = MODULE_PAYMENT_PAYMILL_CC_TEXT_TITLE;
         $this->public_title = MODULE_PAYMENT_PAYMILL_CC_TEXT_PUBLIC_TITLE;
