@@ -15,6 +15,7 @@ define('MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY_TITLE', 'Public API Key');
 define('MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY_DESC', '');
 define('MODULE_PAYMENT_PAYMILL_TEXT_ERROR_100', 'Zahlung konnte nicht ausgeführt werden. Der Zahlungsstatus ist "open"');
 define('MODULE_PAYMENT_PAYMILL_TEXT_ERROR_200', 'Zahlung konnte nicht ausgeührt werden.');
+define('MODULE_PAYMENT_PAYMILL_TEXT_ERROR_300', 'An API error occured!');
 define('MODULE_PAYMENT_PAYMILL_ELV_LOGGING_TITLE', 'Activate Logging');
 define('MODULE_PAYMENT_PAYMILL_ELV_LOGGING_DESC', '');
 define('MODULE_PAYMENT_PAYMILL_ELV_ORDER_STATUS_ID_TITLE', 'Order Status');

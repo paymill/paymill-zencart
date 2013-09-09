@@ -89,7 +89,6 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     {
         global $_GET;
         $error = '';
-
         if (isset($_GET['error'])) {
             $error = urldecode($_GET['error']);
         }
@@ -100,6 +99,9 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
                 break;
             case '200':
                 $error_text['error'] = utf8_decode(MODULE_PAYMENT_PAYMILL_TEXT_ERROR_200);
+                break;
+            case '300':
+                $error_text['error'] = utf8_decode(MODULE_PAYMENT_PAYMILL_TEXT_ERROR_300);
                 break;
         }
 
