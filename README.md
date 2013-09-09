@@ -7,7 +7,7 @@ ZenCart Plugin for Paymill credit card and elv payments
 
 Download the following zip file and upload the extracted files in the root directory of your ZenCart shop.
 
-https://github.com/paymill/paymill-zencart/archive/master.zip
+[Get Paymill Zencart Plugin here](https://github.com/paymill/paymill-zencart/archive/master.zip) .
 
 # Configuration
 
