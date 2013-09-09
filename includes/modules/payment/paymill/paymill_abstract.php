@@ -176,7 +176,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         $_SESSION['paymill']['transaction_id'] = $this->paymentProcessor->getTransactionId();
 
         if (!$result) {
-            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false) . '?step=step2&payment_error=' . $this->code . '&error=200');
+            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false) . '&payment_error=' . $this->code . '&error=200');
         }
         
         if ($this->fastCheckoutFlag) {
