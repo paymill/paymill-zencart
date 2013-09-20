@@ -9,6 +9,8 @@ Download the following zip file and upload the extracted files in the root direc
 
 [Get Paymill Zencart Plugin here](https://github.com/paymill/paymill-zencart/archive/master.zip) .
 
+Put the content of the admin folder into your admin folder.
+
 # Configuration
 
 Afterwards enable Paymill in your shop backend and insert your test or live keys.
