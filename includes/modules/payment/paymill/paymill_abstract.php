@@ -152,6 +152,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
 
     function before_process()
     {
+        unset($_SESSION['log_id']);
         global $order;
 
         $this->paymentProcessor->setAmount((int) $this->format_raw($order->info['total']));
@@ -314,27 +315,16 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     function log($messageInfo, $debugInfo)
     {
         global $db;
-        $log = new Services_Paymill_Log();
         
-        $param = $this->paramName;
-        if (is_null($param)) {
-            $param = 'default';
-        }
-        
-        $log->$param = array(
-            'debug' => $debugInfo,
-            'message' => $messageInfo
+        $log[$messageInfo] = array (
+            'debug'   => $debugInfo
         );
         
         if ($this->logging) {
             if (array_key_exists('log_id', $_SESSION)) {
-                $data = zen_db_fetch_array(zen_db_query('SELECT debug from `pi_paymill_logging` WHERE ' . $_SESSION['log_id']));
-                $log->fill($data['debug']);
-                $db->Execute("UPDATE `pi_paymill_logging` SET debug = '" . zen_db_input($log->toJson()) . "' WHERE id = " . $_SESSION['log_id']);
-            } else {
-                $db->Execute("INSERT INTO `pi_paymill_logging` (debug) VALUES('" . zen_db_input($log->toJson()) . "')");
-                $data = zen_db_fetch_array(zen_db_query("SELECT LAST_INSERT_ID();"));
-                $_SESSION['log_id'] = $data['LAST_INSERT_ID()'];
+                $db->Execute("INSERT INTO `pi_paymill_logging` (debug) VALUES('" . zen_db_input(json_encode($log)) . "')");
+                $data = $db->Execute("SELECT LAST_INSERT_ID();");
+                $_SESSION['log_id'] = $data->fields['LAST_INSERT_ID()'];
             }
         }
     }
