@@ -155,6 +155,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         unset($_SESSION['log_id']);
         global $order;
 
+        $_SESSION['paymill_identifier'] = time();
         $this->paymentProcessor->setAmount((int) $this->format_raw($order->info['total']));
         $this->paymentProcessor->setApiUrl((string) $this->apiUrl);
         $this->paymentProcessor->setCurrency((string) strtoupper($order->info['currency']));
@@ -316,15 +317,16 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     {
         global $db;
         
-        $log[$messageInfo] = array (
-            'debug'   => $debugInfo
-        );
-        
         if ($this->logging) {
-            if (array_key_exists('log_id', $_SESSION)) {
-                $db->Execute("INSERT INTO `pi_paymill_logging` (debug) VALUES('" . zen_db_input(json_encode($log)) . "')");
-                $data = $db->Execute("SELECT LAST_INSERT_ID();");
-                $_SESSION['log_id'] = $data->fields['LAST_INSERT_ID()'];
+            if (array_key_exists('paymill_identifier', $_SESSION)) {
+                $db->Execute("INSERT INTO `pi_paymill_logging` "
+                            . "(debug, message, identifier) "
+                            . "VALUES('" 
+                              . zen_db_input($debugInfo) . "', '" 
+                              . zen_db_input($messageInfo) . "', '" 
+                              . zen_db_input($_SESSION['paymill_identifier']) 
+                            . "')"
+                );
             }
         }
     }
@@ -338,9 +340,13 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     function install()
     {
         global $db;
+        
+        $db->Execute("DROP TABLE `pi_paymill_logging`");
+        
         $db->Execute(
             "CREATE TABLE IF NOT EXISTS `pi_paymill_logging` ("
           . "`id` int(11) NOT NULL AUTO_INCREMENT,"
+          . "`identifier` text NOT NULL,"
           . "`debug` text NOT NULL,"
           . "`message` text NOT NULL,"
           . "`date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"

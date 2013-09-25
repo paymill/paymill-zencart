@@ -1,11 +1,9 @@
 <?php
 global $db;
 require_once ('includes/application_top.php');
-require_once (DIR_FS_CATALOG . 'ext/modules/payment/paymill/lib/Services/Paymill/Log.php');
 
 $sql = "SELECT * FROM `pi_paymill_logging` WHERE id = '" . zen_db_input($_GET['id']) . "'";
 $logs = $db->Execute($sql);
-$logModel = new Services_Paymill_Log();
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html <?php echo HTML_PARAMS; ?>>
@@ -39,9 +37,7 @@ $logModel = new Services_Paymill_Log();
                         </tr>
                         <tr>
                             <td>
-                                <?php $logModel->fill($logs->fields['debug']) ?>
-                                <?php $data = $logModel->toArray(); ?>
-                                <pre><?php echo $data[$_GET['key']]['message']; ?><hr/><?php echo $data[$_GET['key']]['debug']; ?></pre>
+                                <pre><?php echo $logs->fields['message']; ?><hr/><?php echo $logs->fields['debug']; ?></pre>
                             </td>
                         </tr>
                         <tr>
