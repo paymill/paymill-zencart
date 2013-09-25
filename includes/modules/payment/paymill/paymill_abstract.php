@@ -152,7 +152,6 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
 
     function before_process()
     {
-        unset($_SESSION['log_id']);
         global $order;
 
         $_SESSION['paymill_identifier'] = time();
@@ -182,6 +181,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         $_SESSION['paymill']['transaction_id'] = $this->paymentProcessor->getTransactionId();
 
         if (!$result) {
+            unset($_SESSION['paymill_identifier']);
             zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false) . '&payment_error=' . $this->code . '&error=200');
         }
         
@@ -190,6 +190,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         } else {
             $this->saveClient();
         }
+        
+        unset($_SESSION['paymill_identifier']);
     }
 
     function existingClient($data)
