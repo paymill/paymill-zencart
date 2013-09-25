@@ -1,6 +1,11 @@
 paymill-zencart
 ====================
 
+# Update Note
+
+To update the ZenCart Paymill plugin you must reinstall the plugin to ensure 
+that all needed tables are created.
+
 ZenCart Plugin for Paymill credit card and elv payments
 
 # Installation
