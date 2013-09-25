@@ -22,8 +22,8 @@ Afterwards enable Paymill in your shop backend and insert your test or live keys
 
 # In case of errors
 
-In case of any errors check the paymill log entry in the plugin config, copy the
-contents and contact the Paymill support (support@paymill.de).
+In case of any errors check the paymill log entry in the plugin config and 
+contact the Paymill support (support@paymill.de).
 
 # Notes about the payment process
 
