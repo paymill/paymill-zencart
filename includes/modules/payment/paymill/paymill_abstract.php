@@ -164,7 +164,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         $this->paymentProcessor->setPrivateKey((string) $this->privateKey);
         $this->paymentProcessor->setToken((string) $_POST['paymill_token']);
         $this->paymentProcessor->setLogger($this);
-        $this->paymentProcessor->setSource($this->version . '_ZENCART_');
+        $this->paymentProcessor->setSource($this->version . '_ZENCART_' . PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR);
 
         $this->fastCheckout->setFastCheckoutFlag($this->fastCheckoutFlag);
         
