@@ -38,9 +38,9 @@ class FastCheckout
     {
         global $db;
         if ($this->_canUpdate($userId)) {
-            $sql = "UPDATE `pi_paymill_fastcheckout`SET `paymentID_CC` = '$newPaymentId' WHERE `userID` = '$userId'";
+            $sql = "UPDATE `". DB_PREFIX . "pi_paymill_fastcheckout`SET `paymentID_CC` = '$newPaymentId' WHERE `userID` = '$userId'";
         } else {
-            $sql = "INSERT INTO `pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_CC`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
+            $sql = "INSERT INTO `". DB_PREFIX . "pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_CC`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
         }
 
         $db->Execute($sql);
@@ -50,9 +50,9 @@ class FastCheckout
     {   
         global $db;
         if ($this->_canUpdate($userId)) {
-            $sql = "UPDATE `pi_paymill_fastcheckout`SET `paymentID_ELV` = '$newPaymentId' WHERE `userID` = '$userId'";
+            $sql = "UPDATE `". DB_PREFIX . "pi_paymill_fastcheckout`SET `paymentID_ELV` = '$newPaymentId' WHERE `userID` = '$userId'";
         } else {
-            $sql = "INSERT INTO `pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_ELV`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
+            $sql = "INSERT INTO `". DB_PREFIX . "pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_ELV`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
         }
         
        $db->Execute($sql);
@@ -67,7 +67,7 @@ class FastCheckout
     public function loadFastCheckoutData($userId)
     {
         global $db;
-        $sql = "SELECT * FROM `pi_paymill_fastcheckout` WHERE `userID` = '$userId'";
+        $sql = "SELECT * FROM `". DB_PREFIX . "pi_paymill_fastcheckout` WHERE `userID` = '$userId'";
         
         $fastCheckout = $db->Execute($sql);
         

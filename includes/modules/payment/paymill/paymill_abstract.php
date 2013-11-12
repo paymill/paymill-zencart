@@ -316,14 +316,14 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
 
         return $status_id;
     }
-    
+
     function log($messageInfo, $debugInfo)
     {
         global $db;
         
         if ($this->logging) {
             if (array_key_exists('paymill_identifier', $_SESSION)) {
-                $db->Execute("INSERT INTO `pi_paymill_logging` "
+                $db->Execute("INSERT INTO `". DB_PREFIX . "pi_paymill_logging` "
                             . "(debug, message, identifier) "
                             . "VALUES('" 
                               . zen_db_input($debugInfo) . "', '" 
@@ -344,11 +344,12 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     function install()
     {
         global $db;
-        
+
         $db->Execute("DROP TABLE IF EXISTS `pi_paymill_logging`");
-        
+        $db->Execute("DROP TABLE IF EXISTS `pi_paymill_fastcheckout`");
+
         $db->Execute(
-            "CREATE TABLE IF NOT EXISTS `pi_paymill_logging` ("
+            "CREATE TABLE IF NOT EXISTS `". DB_PREFIX . "pi_paymill_logging` ("
           . "`id` int(11) NOT NULL AUTO_INCREMENT,"
           . "`identifier` text NOT NULL,"
           . "`debug` text NOT NULL,"
@@ -359,7 +360,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         );
         
         $db->Execute(
-            "CREATE TABLE IF NOT EXISTS `pi_paymill_fastcheckout` ("
+            "CREATE TABLE IF NOT EXISTS `". DB_PREFIX . "pi_paymill_fastcheckout` ("
            . "`userID` varchar(100),"
            . "`clientID` varchar(100),"
            . "`paymentID_CC` varchar(100),"

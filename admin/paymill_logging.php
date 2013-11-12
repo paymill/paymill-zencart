@@ -10,7 +10,7 @@ if (!isset($_GET['seite'])) {
 
 $start = $page * $recordLimit - $recordLimit;
 
-$sql = "SELECT * FROM `pi_paymill_logging` LIMIT $start, $recordLimit";
+$sql = "SELECT * FROM `". DB_PREFIX . "pi_paymill_logging` LIMIT $start, $recordLimit";
 
 if (isset($_POST['reset_filter'])) {
     unset($_SESSION['connected']);
@@ -25,11 +25,11 @@ if (isset($_POST['submit']) || isset($_SESSION['search_key'])) {
     isset($_POST['submit']) ? $searchKey = $_POST['search_key'] : $searchKey = $_SESSION['search_key'];
     if (array_key_exists('connected', $_POST) || array_key_exists('connected', $_SESSION)) {
         $_SESSION['connected'] = true;
-        $sql = "SELECT identifier FROM `pi_paymill_logging` WHERE debug like '%" . zen_db_input($searchKey) . "%' LIMIT $start, $recordLimit";
+        $sql = "SELECT identifier FROM `". DB_PREFIX . "pi_paymill_logging` WHERE debug like '%" . zen_db_input($searchKey) . "%' LIMIT $start, $recordLimit";
         $identifier = $db->Execute($sql);
-        $sql = "SELECT * FROM `pi_paymill_logging` WHERE identifier = '" . zen_db_input($identifier->fields['identifier']) . "' LIMIT $start, $recordLimit";
+        $sql = "SELECT * FROM `". DB_PREFIX . "pi_paymill_logging` WHERE identifier = '" . zen_db_input($identifier->fields['identifier']) . "' LIMIT $start, $recordLimit";
     } else {
-        $sql = "SELECT * FROM `pi_paymill_logging` WHERE debug like '%" . zen_db_input($searchKey) . "%' LIMIT $start, $recordLimit";
+        $sql = "SELECT * FROM `". DB_PREFIX . "pi_paymill_logging` WHERE debug like '%" . zen_db_input($searchKey) . "%' LIMIT $start, $recordLimit";
     }
 }
 

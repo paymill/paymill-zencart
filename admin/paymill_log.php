@@ -2,7 +2,7 @@
 global $db;
 require_once ('includes/application_top.php');
 
-$sql = "SELECT * FROM `pi_paymill_logging` WHERE id = '" . zen_db_input($_GET['id']) . "'";
+$sql = "SELECT * FROM `". DB_PREFIX . "pi_paymill_logging` WHERE id = '" . zen_db_input($_GET['id']) . "'";
 $logs = $db->Execute($sql);
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
