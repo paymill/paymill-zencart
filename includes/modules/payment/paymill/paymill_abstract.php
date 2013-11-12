@@ -345,7 +345,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     {
         global $db;
         
-        $db->Execute("DROP TABLE `pi_paymill_logging`");
+        $db->Execute("DROP TABLE IF EXISTS `pi_paymill_logging`");
         
         $db->Execute(
             "CREATE TABLE IF NOT EXISTS `pi_paymill_logging` ("
