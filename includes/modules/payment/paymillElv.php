@@ -10,8 +10,6 @@ class paymillElv extends paymill_abstract
         global $order;
 
         $this->code = 'paymillElv';
-        $this->version = '1.2.0';
-        $this->api_version = '2';
         $this->title = MODULE_PAYMENT_PAYMILL_ELV_TEXT_TITLE;
         $this->public_title = MODULE_PAYMENT_PAYMILL_ELV_TEXT_PUBLIC_TITLE;
 

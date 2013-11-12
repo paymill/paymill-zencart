@@ -15,6 +15,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     var $code, $title, $description = '', $enabled, $privateKey, $logging, $fastCheckoutFlag, $label, $publicKey;
     var $bridgeUrl = 'https://bridge.paymill.com/';
     var $apiUrl = 'https://api.paymill.com/v2/';
+    var $version = '1.2.1';
+    var $api_version = '2';
     
     /**
      * @var FastCheckout
