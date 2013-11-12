@@ -94,22 +94,12 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     function get_error()
     {
         global $_GET;
-        $error = '';
+        
         if (isset($_GET['error'])) {
             $error = urldecode($_GET['error']);
         }
 
-        switch ($error) {
-            case '100':
-                $error_text['error'] = utf8_decode(MODULE_PAYMENT_PAYMILL_TEXT_ERROR_100);
-                break;
-            case '200':
-                $error_text['error'] = utf8_decode(MODULE_PAYMENT_PAYMILL_TEXT_ERROR_200);
-                break;
-            case '300':
-                $error_text['error'] = utf8_decode(MODULE_PAYMENT_PAYMILL_TEXT_ERROR_300);
-                break;
-        }
+        $error_text['error'] = utf8_decode(constant($error));
 
         return $error_text;
     }
@@ -184,7 +174,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
 
         if (!$result) {
             unset($_SESSION['paymill_identifier']);
-            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false) . '&payment_error=' . $this->code . '&error=200');
+            $errorCode = $this->paymentProcessor->getErrorCode();
+            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false) . '&payment_error=' . $this->code . '&error=PAYMILL_'.$errorCode);
         }
         
         if ($this->fastCheckoutFlag) {
