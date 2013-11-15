@@ -1,4 +1,7 @@
 #Release Notes
+##1.3.0
+- Added additional validation for payments during fast checkout
+
 ##1.2.1
 - Added Improved Error Feedback
 - Added Changelog
