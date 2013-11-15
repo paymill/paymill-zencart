@@ -9,6 +9,7 @@ class paymillCc extends paymill_abstract
         parent::paymill_abstract();
         global $order;
         $this->code = 'paymillCc';
+        $this->description = "<p style='font-weight: bold; text-align: center'>$this->version</p>";
         $this->title = MODULE_PAYMENT_PAYMILL_CC_TEXT_TITLE;
         $this->public_title = MODULE_PAYMENT_PAYMILL_CC_TEXT_PUBLIC_TITLE;
         
@@ -27,7 +28,7 @@ class paymillCc extends paymill_abstract
             }
                         
             if ($this->logging) {
-                $this->description = '<a href="' . zen_href_link('paymill_logging.php') . '">PAYMILL Log</a>';
+                $this->description .= "<p><a href='" . zen_href_link('paymill_logging.php') . "'>PAYMILL Log</a></p>";
             }
         }
         

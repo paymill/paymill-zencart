@@ -10,6 +10,7 @@ class paymillElv extends paymill_abstract
         global $order;
 
         $this->code = 'paymillElv';
+        $this->description = "<p style='font-weight: bold; text-align: center'>$this->version</p>";
         $this->title = MODULE_PAYMENT_PAYMILL_ELV_TEXT_TITLE;
         $this->public_title = MODULE_PAYMENT_PAYMILL_ELV_TEXT_PUBLIC_TITLE;
 
@@ -28,7 +29,7 @@ class paymillElv extends paymill_abstract
             }
                         
             if ($this->logging) {
-                $this->description = '<a href="' . zen_href_link('paymill_logging.php') . '">PAYMILL Log</a>';
+                $this->description .= "<p><a href='" . zen_href_link('paymill_logging.php') . "'>PAYMILL Log</a></p>";
             }
         }
 
