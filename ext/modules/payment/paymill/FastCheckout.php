@@ -76,15 +76,32 @@ class FastCheckout
     
     public function hasElvPaymentId($userId)
     {
+        $hasPaymentId = false;
         $data = $this->loadFastCheckoutData($userId);
-        return $data && array_key_exists('paymentID_ELV', $data) && !empty($data['paymentID_ELV']);
+        if(($data && array_key_exists('paymentID_ELV', $data) && !empty($data['paymentID_ELV']))){
+            $privateKey = trim(MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY);
+            $apiUrl = 'https://api.paymill.com/v2/';
+            $payments = new Services_Paymill_Payments($privateKey, $apiUrl);
+            $payment = $payments->getOne($data['paymentID_ELV']);
+            $hasPaymentId = (isset($payment['id']));
+        }
+
+        return $hasPaymentId;
     }
     
     public function hasCcPaymentId($userId)
     {
+        $hasPaymentId = false;
         $data = $this->loadFastCheckoutData($userId);
-        
-        return $data && array_key_exists('paymentID_CC', $data) && !empty($data['paymentID_CC']);
+        if($data && array_key_exists('paymentID_CC', $data) && !empty($data['paymentID_CC'])){
+            $privateKey = trim(MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY);
+            $apiUrl = 'https://api.paymill.com/v2/';
+            $payments = new Services_Paymill_Payments($privateKey, $apiUrl);
+            $payment = $payments->getOne($data['paymentID_CC']);
+            $hasPaymentId = (isset($payment['id']));
+        }
+
+        return $hasPaymentId;
     }
 
     public function setFastCheckoutFlag($fastCheckoutFlag)
