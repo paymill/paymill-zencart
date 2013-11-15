@@ -2,6 +2,7 @@
 ##1.3.0
 - Added additional validation for payments during fast checkout
 - Added version number to configuration
+- Removed PAYMILL Label
 
 ##1.2.1
 - Added Improved Error Feedback
