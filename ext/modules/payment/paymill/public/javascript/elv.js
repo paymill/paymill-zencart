@@ -35,7 +35,7 @@ $(document).ready(function() {
 				}
 
                                 if(sepaActive == 'True'){ //Sepa Form active
-
+                                    console.log("Starting Validation for new form...");
                                     if(false === ($('#paymill-iban').val() != '')){
                                         $('#elv-iban-error').text(elv_iban_invalid);
                                         $('#elv-iban-error').css('display', 'block');
@@ -49,18 +49,19 @@ $(document).ready(function() {
                                     }
 
                                 } else { //Old Form active
-
+                                    console.log("Starting Validation for old form...");
                                     if (false === paymill.validateAccountNumber($('#paymill-account-number').val())) {
                                         $("#elv-account-error").text(elv_account_number_invalid);
                                         $("#elv-account-error").css('display', 'block');
                                         elvErrorFlag = false;
                                     }
-
+                                    console.log("Account number valid...");
                                     if (false === paymill.validateBankCode($('#paymill-bank-code').val())) {
                                         $("#elv-bankcode-error").text(elv_bank_code_invalid);
                                         $("#elv-bankcode-error").css('display', 'block');
                                         elvErrorFlag = false;
                                     }
+                                    console.log("Bank code valid...");
                                 }
 
 				if (!elvErrorFlag) {
@@ -119,7 +120,7 @@ $(document).ready(function() {
 	{
             $("#card-holder-error").css('display', 'none');
 
-            if(sepaActive = 'True'){ //Sepa Form active
+            if(sepaActive == 'True'){ //Sepa Form active
                 $("#elv-iban-error").css('display', 'none');
                 $("#elv-bic-error").css('display', 'none');
             } else {
