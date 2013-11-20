@@ -11,7 +11,7 @@ $(document).ready(function() {
 	}
 
         $('#account-name-field').html('<input type="text" value="' + paymill_elv_holder + '" id="paymill-bank-owner" class="form-row-paymill" />');
-        if(sepaActive){
+        if(sepaActive == 'True'){
             $('#iban-field').html('<input type="text" value="' + paymill_elv_iban + '" id="paymill-iban" class="form-row-paymill" />');
             $('#bic-field').html('<input type="text" value="' + paymill_elv_bic + '" id="paymill-bic" class="form-row-paymill" />');
         } else {
@@ -34,7 +34,7 @@ $(document).ready(function() {
 					elvErrorFlag = false;
 				}
 
-                                if(sepaActive){ //Sepa Form active
+                                if(sepaActive == 'True'){ //Sepa Form active
 
                                     if(false === ($('#paymill-iban').val() != '')){
                                         $('#elv-iban-error').text(elv_iban_invalid);
@@ -68,7 +68,7 @@ $(document).ready(function() {
 				}
 
 
-                                if(sepaActive){ //Sepa Form active
+                                if(sepaActive == 'True'){ //Sepa Form active
                                     paymill.createToken({
                                         iban: $('#paymill-iban').val(),
                                         bic: $('#paymill-bic').val(),
@@ -94,7 +94,7 @@ $(document).ready(function() {
 		$('#paymill-bank-owner').val('');
 	});
 
-	if(sepaActive){
+	if(sepaActive == 'True'){
             $('#paymill-iban').focus(function() {
                 $('#paymill-iban').val('');
                 paymill_elv_fastcheckout = false;
@@ -119,7 +119,7 @@ $(document).ready(function() {
 	{
             $("#card-holder-error").css('display', 'none');
 
-            if(sepaActive){ //Sepa Form active
+            if(sepaActive = 'True'){ //Sepa Form active
                 $("#elv-iban-error").css('display', 'none');
                 $("#elv-bic-error").css('display', 'none');
             } else {

@@ -93,15 +93,15 @@ class paymillElv extends paymill_abstract
             )
         );
 
+        array_push($confirmation['fields'],
+            array(
+                 'title' => '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT_HOLDER . '</div>',
+                 'field' => '<span id="account-name-field"></span><span id="elv-holder-error" class="paymill-error"></span>'
+            )
+        );
 
-        if(MODULE_PAYMENT_PAYMILL_ELV_SEPA){
-            array_push($confirmation['fields'],
-                array(
-                     'title' => '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT_HOLDER . '</div>',
-                     'field' => '<span id="account-name-field"></span><span id="elv-holder-error" class="paymill-error"></span>'
-                )
-            );
 
+        if(MODULE_PAYMENT_PAYMILL_ELV_SEPA == 'True'){
             array_push($confirmation['fields'],
                 array(
                      'title' => '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_IBAN . '</div>',
@@ -117,13 +117,6 @@ class paymillElv extends paymill_abstract
             );
 
         } else {
-            array_push($confirmation['fields'],
-                array(
-                     'title' => '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT_HOLDER . '</div>',
-                     'field' => '<span id="account-name-field"></span><span id="elv-holder-error" class="paymill-error"></span>'
-                )
-            );
-
             array_push($confirmation['fields'],
                 array(
                      'title' => '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT . '</div>',
