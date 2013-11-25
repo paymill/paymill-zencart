@@ -68,6 +68,6 @@ define('MODULE_PAYMENT_PAYMILL_ELV_SEPA_TITLE','Zahlungsformular auf IBAN/BIC um
 define('MODULE_PAYMENT_PAYMILL_ELV_SEPA_DESC','Momentan nur aus Deutschland verfügbar');
 define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_BIC','BIC');
 define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_IBAN','IBAN');
-define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_IBAN_INVALID','Test');
-define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_BIC_INVALID','Test');
+define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_IBAN_INVALID','Die von Ihnen angegebene IBAN ist ungültig. Bitte korrigieren Sie Ihre Angaben.');
+define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_BIC_INVALID','Die von Ihnen angegebene BIC ist ungültig. Bitte korrigieren Sie Ihre Angaben.');
 ?>
