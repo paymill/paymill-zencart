@@ -1,6 +1,7 @@
 var isCcSubmitted = false;
 $(document).ready(function ()
 {
+
     if (typeof $.fn.prop !== 'function') {
         $.fn.prop = function (name, value)
         {
@@ -24,7 +25,6 @@ $(document).ready(function ()
 
         $('<option/>').val(cc_month_value).text($("<div/>").html(cc_month_text).text()).appendTo($('#paymill-card-expiry-month'));
     }
-    ;
 
     for (var cc_year_counter in paymill_cc_years) {
         var cc_year_value = paymill_cc_years[cc_year_counter][0];
@@ -181,9 +181,9 @@ $(document).ready(function ()
     {
         isCcSubmitted = true;
         if (error) {
-            console.log(error);
             isCcSubmitted = false;
-            window.location = checkout_payment_link;
+            console.log(error);
+            window.location = $("<div/>").html(checkout_payment_link + error.apierror).text();
         } else {
             $('#paymill_form').html('<input type="hidden" name="paymill_token" value="' + result.token + '" />');
             $('#paymill_form').submit();
