@@ -42,16 +42,14 @@
 
 #paymill-card-expiry-month
 {
-    width: 110px;
+    width: 75px;
     height: 18px;
-    float: left;
 }
 
 #paymill-card-expiry-year
 {
-    width: 80px;
+    width: 55px;
     height: 18px;
-    float: right;
 }
 
 .paymill-expiry

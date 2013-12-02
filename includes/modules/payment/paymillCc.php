@@ -137,8 +137,8 @@ class paymillCc extends paymill_abstract
         
         array_push($confirmation['fields'], 
             array(
-                'title' => '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_EXPIRY . '</div>',
-                'field' => '<span class="paymill-expiry"><span id="card-expiry-month-field"></span>&nbsp;<span id="card-expiry-year-field"></span></span><span id="card-expiry-error" class="paymill-error"></span>'
+                'title' => '<div class="paymill-label-field paymill-expiry">' . MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_EXPIRY . '</div>',
+                'field' => '<div class="paymill-expiry"><span id="card-expiry-month-field"></span>&nbsp;<span id="card-expiry-year-field"></span></span><span id="card-expiry-error" class="paymill-error"></div>'
             )
         );
         
