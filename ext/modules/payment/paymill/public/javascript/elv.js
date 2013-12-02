@@ -142,7 +142,7 @@ $(document).ready(function ()
         if (error) {
             isElvSubmitted = false;
             console.log(error);
-            window.location = checkout_payment_link;
+            window.location = $("<div/>").html(checkout_payment_link + error.apierror).text();
         } else {
             $('#paymill_form').html('<input type="hidden" name="paymill_token" value="' + result.token + '" />').submit();
             return false;
