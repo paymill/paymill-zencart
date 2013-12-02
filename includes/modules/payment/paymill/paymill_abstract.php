@@ -175,10 +175,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         }
         
         $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
-        if (!empty($data['clientID'])) {
-            $this->existingClient($data);
-        }
-        
+        $this->existingClient($data);
+
         $result = $this->paymentProcessor->processPayment();
         $_SESSION['paymill']['transaction_id'] = $this->paymentProcessor->getTransactionId();
 
@@ -200,18 +198,25 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     function existingClient($data)
     {
         global $order;
-        
-        $client = $this->clients->getOne($data['clientID']);
-        if ($client['email'] !== $order->customer['email_address']) {
-            $this->clients->update(
-                array(
-                    'id' => $data['clientID'],
-                    'email' => $order->customer['email_address']
-                )
-            );
+        $clientId = '';
+
+        if($this->fastCheckout->hasClient($data['clientID'])){
+
+            $client = $this->clients->getOne($data['clientID']);
+
+            if ($client['email'] !== $order->customer['email_address']) {
+                $this->clients->update(
+                    array(
+                        'id' => $data['clientID'],
+                        'email' => $order->customer['email_address']
+                    )
+                );
+            }
+
+            $clientId = $data['clientID'];
         }
 
-        $this->paymentProcessor->setClientId($client['id']);
+        $this->paymentProcessor->setClientId($clientId);
     }
     
     function fastCheckout()

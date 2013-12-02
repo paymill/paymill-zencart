@@ -1,4 +1,6 @@
 <?php
+require_once(DIR_FS_CATALOG . 'ext/modules/payment/paymill/lib/Services/Paymill/Clients.php');
+require_once(DIR_FS_CATALOG . 'ext/modules/payment/paymill/lib/Services/Paymill/Payments.php');
 
 class FastCheckout
 {
@@ -26,12 +28,12 @@ class FastCheckout
     
     public function canCustomerFastCheckoutCc($userId)
     {   
-        return $this->hasCcPaymentId($userId) && $this->_fastCheckoutFlag;
+        return $this->hasCcPaymentId($userId) && $this->_fastCheckoutFlag && $this->hasClient($userId);
     }
     
     public function canCustomerFastCheckoutElv($userId)
     {   
-        return $this->hasElvPaymentId($userId) && $this->_fastCheckoutFlag;
+        return $this->hasElvPaymentId($userId) && $this->_fastCheckoutFlag && $this->hasClient($userId);
     }
     
     public function saveCcIds($userId, $newClientId, $newPaymentId)
@@ -40,7 +42,7 @@ class FastCheckout
         if ($this->_canUpdate($userId)) {
             $sql = "UPDATE `". DB_PREFIX . "pi_paymill_fastcheckout`SET `paymentID_CC` = '$newPaymentId' WHERE `userID` = '$userId'";
         } else {
-            $sql = "INSERT INTO `". DB_PREFIX . "pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_CC`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
+            $sql = "REPLACE INTO `". DB_PREFIX . "pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_CC`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
         }
 
         $db->Execute($sql);
@@ -52,7 +54,7 @@ class FastCheckout
         if ($this->_canUpdate($userId)) {
             $sql = "UPDATE `". DB_PREFIX . "pi_paymill_fastcheckout`SET `paymentID_ELV` = '$newPaymentId' WHERE `userID` = '$userId'";
         } else {
-            $sql = "INSERT INTO `". DB_PREFIX . "pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_ELV`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
+            $sql = "REPLACE INTO `". DB_PREFIX . "pi_paymill_fastcheckout` (`userID`, `clientID`, `paymentID_ELV`) VALUES ('$userId', '$newClientId', '$newPaymentId')";
         }
         
        $db->Execute($sql);
@@ -60,8 +62,15 @@ class FastCheckout
     
     private function _canUpdate($userId)
     {
+        $privateKey = trim(MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY);
+        $apiUrl = 'https://api.paymill.com/v2/';
         $data = $this->loadFastCheckoutData($userId);
-        return $data;
+
+        $client = new Services_Paymill_Clients($privateKey, $apiUrl);
+        $clientData = $client->getOne($data['clientID']);
+        $result = $clientData && array_key_exists('id', $clientData) && !empty($clientData['id']);
+        return $result ? $data : false;
+
     }
     
     public function loadFastCheckoutData($userId)
@@ -83,7 +92,7 @@ class FastCheckout
             $apiUrl = 'https://api.paymill.com/v2/';
             $payments = new Services_Paymill_Payments($privateKey, $apiUrl);
             $payment = $payments->getOne($data['paymentID_ELV']);
-            $hasPaymentId = (isset($payment['id']));
+            $hasPaymentId = (isset($payment['id']) && $this->hasClient($userId));
         }
 
         return $hasPaymentId;
@@ -98,10 +107,30 @@ class FastCheckout
             $apiUrl = 'https://api.paymill.com/v2/';
             $payments = new Services_Paymill_Payments($privateKey, $apiUrl);
             $payment = $payments->getOne($data['paymentID_CC']);
-            $hasPaymentId = (isset($payment['id']));
+            $hasPaymentId = (isset($payment['id']) && $this->hasClient($userId));
         }
 
         return $hasPaymentId;
+    }
+
+    public function hasClient($userId)
+    {
+        $hasClient = false;
+        $data = $this->loadFastCheckoutData($userId);
+        if($data && array_key_exists('clientID', $data) && !empty($data['clientID'])){
+            $privateKey = trim(MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY);
+            $apiUrl = 'https://api.paymill.com/v2/';
+            $clients = new Services_Paymill_Clients($privateKey, $apiUrl);
+            $client = $clients->getOne($data['clientID']);
+            $hasClient = (isset($client['id']));
+        }
+
+        if(!$hasClient){
+            $this->saveCcIds($userId, "", "");
+            $this->saveElvIds($userId, "", "");
+        }
+
+        return $hasClient;
     }
 
     public function setFastCheckoutFlag($fastCheckoutFlag)
