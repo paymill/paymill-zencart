@@ -94,14 +94,24 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     function get_error()
     {
         global $_GET;
-        
+        $error = '';
+
         if (isset($_GET['error'])) {
-            $error = urldecode($_GET['error']);
+
+            if (isset($_SESSION['paymill_error'])) {
+                $error = urldecode($_SESSION['paymill_error']);
+                unset($_SESSION['paymill_error']);
+            } elseif (isset($_GET['error'])) {
+                $error = urldecode($_GET['error']);
+            }
         }
 
-        $error_text['error'] = utf8_decode(constant($error));
+        if($error !== ''){
+            $error_text['error'] = utf8_decode(constant('PAYMILL_'.$error));
+        }
 
         return $error_text;
+
     }
 
     function javascript_validation()
@@ -175,7 +185,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         if (!$result) {
             unset($_SESSION['paymill_identifier']);
             $errorCode = $this->paymentProcessor->getErrorCode();
-            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false) . '&payment_error=' . $this->code . '&error=PAYMILL_'.$errorCode);
+            zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false) . '&payment_error=' . $this->code . '&error='.$errorCode);
         }
         
         if ($this->fastCheckoutFlag) {

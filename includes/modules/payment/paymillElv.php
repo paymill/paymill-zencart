@@ -83,7 +83,7 @@ class paymillElv extends paymill_abstract
                 . 'var paymill_elv_bic = "' . utf8_decode($payment['bic']) . '";'
                 . 'var paymill_elv_account = "' . $payment['account'] . '";'
                 . 'var paymill_elv_fastcheckout = ' . $this->fastCheckout->canCustomerFastCheckoutElvTemplate($_SESSION['customer_id']) . ';'
-                . 'var checkout_payment_link = "' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false). '&payment_error=' . $this->code . '&error=300' . '";'
+                . 'var checkout_payment_link = "' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false). '&payment_error=' . $this->code . '&error=' . '";'
                 . '</script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/elv.js"></script>';
         
