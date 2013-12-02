@@ -70,4 +70,16 @@ define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_BIC','BIC');
 define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_IBAN','IBAN');
 define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_IBAN_INVALID','Die von Ihnen angegebene IBAN ist ungültig. Bitte korrigieren Sie Ihre Angaben.');
 define('MODULE_PAYMENT_PAYMILL_ELV_TEXT_BIC_INVALID','Die von Ihnen angegebene BIC ist ungültig. Bitte korrigieren Sie Ihre Angaben.');
+define('PAYMILL_internal_server_error', ' Kommunikation mit dem PSP fehlgeschlagen');
+define('PAYMILL_invalid_public_key', 'Public Key ungültig');
+define('PAYMILL_invalid_payment_data', 'Für diesen Zahlungsmodus, Kreditkartentyp, Währung oder Land nicht zugelassen');
+define('PAYMILL_unknown_error', 'Unbekannter Fehler');
+define('PAYMILL_field_invalid_account_number', 'Fehlende oder ungültige Kontonummer');
+define('PAYMILL_field_invalid_account_holder', 'Fehlender oder ungültiger Karteninhaber');
+define('PAYMILL_field_invalid_bank_code', 'Fehlende oder ungültige Bankleitzahl');
+define('PAYMILL_field_invalid_iban', 'Fehlende oder ungültige IBAN');
+define('PAYMILL_field_invalid_bic', 'Fehlende oder ungültiger BIC');
+define('PAYMILL_field_invalid_country', 'Fehlendes oder nicht unterstütztes Land');
+define('PAYMILL_field_invalid_bank_data', 'Fehlende oder ungültige Bankdatenkombination');
+define('PAYMILL_0', 'Während der Zahlung ist ein Fehler aufgetreten.');
 ?>
