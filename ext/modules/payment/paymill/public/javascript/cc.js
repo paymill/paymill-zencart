@@ -39,8 +39,10 @@ $(document).ready(function ()
 
     $('#paymill-card-number').keyup(function ()
     {
-
+        $('#paymill-card-number').removeClass();
+        $('#paymill-card-number').addClass('form-row-paymill');
         switch (paymill.cardType($('#paymill-card-number').val()).toLowerCase()) {
+
             case 'visa':
                 $('#paymill-card-number').removeClass();
                 $('#paymill-card-number').addClass('form-row-paymill ' + cssClass + 'visa');
@@ -75,10 +77,6 @@ $(document).ready(function ()
                 break;
         }
     });
-
-    if (brand !== '') {
-        $('#paymill-card-number').addClass(cssClass + brand);
-    }
 
     $('#checkout_confirmation').submit(function (event)
     {
@@ -145,6 +143,8 @@ $(document).ready(function ()
     {
         paymill_cc_fastcheckout = false;
         $('#paymill-card-number').val('');
+        $('#paymill-card-number').removeClass();
+        $('#paymill-card-number').addClass('form-row-paymill');
     });
 
     $('#paymill-card-expiry-month').focus(function ()
