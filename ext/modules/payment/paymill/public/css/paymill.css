@@ -17,6 +17,11 @@
     color: #666;
 }
 
+.paymill-label-field
+{
+    padding-top: 5px;
+}
+
 .paymill_powered > a 
 {
     color: #666;
