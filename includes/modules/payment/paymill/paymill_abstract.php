@@ -198,12 +198,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     function existingClient($data)
     {
         global $order;
-        $clientId = '';
-
-        if($this->fastCheckout->hasClient($data['clientID'])){
-
+        if($this->fastCheckout->hasClient($_SESSION['customer_id'])){
             $client = $this->clients->getOne($data['clientID']);
-
             if ($client['email'] !== $order->customer['email_address']) {
                 $this->clients->update(
                     array(
@@ -221,14 +217,14 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     
     function fastCheckout()
     {
-        if ($this->fastCheckout->canCustomerFastCheckoutCc($_SESSION['customer_id']) && $this->code === 'paymillCc') {
+        if ($this->fastCheckout->canCustomerFastCheckoutCc($_SESSION['customer_id']) === 'true' && $this->code === 'paymillCc') {
             $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
             if (!empty($data['paymentID_CC'])) {
                 $this->paymentProcessor->setPaymentId($data['paymentID_CC']);
             }
         }
         
-        if ($this->fastCheckout->canCustomerFastCheckoutElv($_SESSION['customer_id']) && $this->code === 'paymillElv') {
+        if ($this->fastCheckout->canCustomerFastCheckoutElv($_SESSION['customer_id']) === 'true' && $this->code === 'paymillElv') {
             $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
             
             if (!empty($data['paymentID_ELV'])) {
@@ -240,31 +236,44 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     function savePayment()
     {
         if ($this->code === 'paymillCc') {
-            $this->fastCheckout->saveCcIds(
+            $result = $this->fastCheckout->saveCcIds(
                 $_SESSION['customer_id'], $this->paymentProcessor->getClientId(), $this->paymentProcessor->getPaymentId()
             );
         }
 
         if ($this->code === 'paymillElv') {
-            $this->fastCheckout->saveElvIds(
+            $result = $this->fastCheckout->saveElvIds(
                 $_SESSION['customer_id'], $this->paymentProcessor->getClientId(), $this->paymentProcessor->getPaymentId()
             );
         }
+
+        $this->log(
+             $result? "Payment saved.": "Payment not saved.",
+                 var_export(array(
+                                 'userId' => $_SESSION['customer_id'],
+                                 'clientId' => $this->paymentProcessor->getClientId(),
+                                 'paymentId' => $this->paymentProcessor->getPaymentId()
+                            ), true));
     }
     
     function saveClient()
     {
         if ($this->code === 'paymillCc') {
-            $this->fastCheckout->saveCcIds(
-                $_SESSION['customer_id'], $this->paymentProcessor->getClientId(), ''
-            );
+            $result = $this->fastCheckout->saveCcIds(
+                $_SESSION['customer_id'], $this->paymentProcessor->getClientId());
         }
 
         if ($this->code === 'paymillElv') {
-            $this->fastCheckout->saveElvIds(
-                $_SESSION['customer_id'], $this->paymentProcessor->getClientId(), ''
-            );
+            $result = $this->fastCheckout->saveElvIds(
+                $_SESSION['customer_id'], $this->paymentProcessor->getClientId());
         }
+
+        $this->log(
+             "Client ".$result ? "": "not " ."saved.",
+                 var_export(array(
+                                 'userId' => $_SESSION['customer_id'],
+                                 'clientId' => $this->paymentProcessor->getClientId(),
+                            ), true));
     }
     
     function after_process()
@@ -323,6 +332,10 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         return $status_id;
     }
 
+    /**
+     * @param string $messageInfo
+     * @param string $debugInfo
+     */
     function log($messageInfo, $debugInfo)
     {
         global $db;
