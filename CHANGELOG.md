@@ -1,4 +1,7 @@
 #Release Notes
+##1.2.2
+- update fast checkout
+
 ##1.2.1
 - Added Improved Error Feedback
 - Added Changelog
