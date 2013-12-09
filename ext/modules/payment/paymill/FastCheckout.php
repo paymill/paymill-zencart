@@ -207,11 +207,13 @@ class FastCheckout
     function _hasPaymentId($paymentType, $userId)
     {
         $hasPaymentId = false;
-        $data = $this->loadFastCheckoutData($userId);
-        $arrayKey = 'paymentID_'.$paymentType;
-        if($data && array_key_exists($arrayKey, $data) && !empty($data[$arrayKey])){
-            $payment = $this->_payments->getOne($data[$arrayKey]);
-            $hasPaymentId = (isset($payment['id']) && $this->hasClient($userId));
+        if (isset($userId) && $userId != '') {
+            $data = $this->loadFastCheckoutData($userId);
+            $arrayKey = 'paymentID_'.$paymentType;
+            if($data && array_key_exists($arrayKey, $data) && !empty($data[$arrayKey])){
+                $payment = $this->_payments->getOne($data[$arrayKey]);
+                $hasPaymentId = (isset($payment['id']) && $this->hasClient($userId));
+            }
         }
 
         return $hasPaymentId;
@@ -227,14 +229,16 @@ class FastCheckout
     function hasClient($userId)
     {
         $hasClient = false;
-        $data = $this->loadFastCheckoutData($userId);
-        if($data && array_key_exists('clientID', $data) && !empty($data['clientID'])){
-            $client = $this->_clients->getOne($data['clientID']);
-            $hasClient = ($client && array_key_exists('id', $client) && !empty($client['id']));
-        }
+        if (isset($userId) && $userId != '') {
+            $data = $this->loadFastCheckoutData($userId);
+            if($data && array_key_exists('clientID', $data) && !empty($data['clientID'])){
+                $client = $this->_clients->getOne($data['clientID']);
+                $hasClient = ($client && array_key_exists('id', $client) && !empty($client['id']));
+            }
 
-        if(!$hasClient){
-            $this->_removeIds($userId);
+            if(!$hasClient){
+                $this->_removeIds($userId);
+            }
         }
 
         return $hasClient;
