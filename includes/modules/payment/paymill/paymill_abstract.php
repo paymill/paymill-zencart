@@ -36,7 +36,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
 
     function paymill_abstract()
     {
-        $this->fastCheckout = new FastCheckout();
+        $this->description = '';
+        $this->description = "<p style='font-weight: bold; text-align: center'>$this->version</p>";
         $this->paymentProcessor = new Services_Paymill_PaymentProcessor();
     }
     
@@ -98,10 +99,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
 
         if (isset($_GET['error'])) {
 
-            if (isset($_SESSION['paymill_error'])) {
-                $error = urldecode($_SESSION['paymill_error']);
-                unset($_SESSION['paymill_error']);
-            } elseif (isset($_GET['error'])) {
+            if (isset($_GET['error'])) {
                 $error = urldecode($_GET['error']);
             }
         }
@@ -157,6 +155,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         global $order;
 
         $_SESSION['paymill_identifier'] = time();
+
         $this->paymentProcessor->setAmount((int) $this->format_raw($order->info['total']));
         $this->paymentProcessor->setApiUrl((string) $this->apiUrl);
         $this->paymentProcessor->setCurrency((string) strtoupper($order->info['currency']));
@@ -175,7 +174,9 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         }
         
         $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
-        $this->existingClient($data);
+        if (array_key_exists('clientID',$data) && $data['clientID'] != '' && $data['clientID'] != null){
+            $this->existingClient($data);
+        }
 
         $result = $this->paymentProcessor->processPayment();
         $_SESSION['paymill']['transaction_id'] = $this->paymentProcessor->getTransactionId();

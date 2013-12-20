@@ -10,17 +10,18 @@ class paymillElv extends paymill_abstract
         global $order;
 
         $this->code = 'paymillElv';
-        $this->description = "<p style='font-weight: bold; text-align: center'>$this->version</p>";
         $this->title = MODULE_PAYMENT_PAYMILL_ELV_TEXT_TITLE;
         $this->public_title = MODULE_PAYMENT_PAYMILL_ELV_TEXT_PUBLIC_TITLE;
+        $this->privateKey = trim(MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY);
+        $this->fastCheckout = new FastCheckout($this->privateKey);
 
         if (defined('MODULE_PAYMENT_PAYMILL_ELV_STATUS')) {
             $this->enabled = ((MODULE_PAYMENT_PAYMILL_ELV_STATUS == 'True') ? true : false);
             $this->sort_order = MODULE_PAYMENT_PAYMILL_ELV_SORT_ORDER;
-            $this->privateKey = trim(MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY);
-            $this->logging = ((MODULE_PAYMENT_PAYMILL_ELV_LOGGING == 'True') ? true : false);
             $this->publicKey = MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY;
+            $this->logging = ((MODULE_PAYMENT_PAYMILL_ELV_LOGGING == 'True') ? true : false);
             $this->fastCheckoutFlag = ((MODULE_PAYMENT_PAYMILL_ELV_FASTCHECKOUT == 'True') ? true : false);
+            $this->fastCheckout->setFastCheckoutFlag($this->fastCheckoutFlag);
             $this->payments = new Services_Paymill_Payments($this->privateKey, $this->apiUrl);
             $this->clients = new Services_Paymill_Clients(trim($this->privateKey), $this->apiUrl);
             if ((int) MODULE_PAYMENT_PAYMILL_ELV_ORDER_STATUS_ID > 0) {
@@ -49,7 +50,7 @@ class paymillElv extends paymill_abstract
             'account' => ''
         );
         
-        if ($this->fastCheckout->hasElvPaymentId($userId)) {
+        if ($this->fastCheckout->canCustomerFastCheckoutElv($userId)) {
             $data = $this->fastCheckout->loadFastCheckoutData($userId);
             $payment = $this->payments->getOne($data['paymentID_ELV']);
         }
@@ -62,10 +63,9 @@ class paymillElv extends paymill_abstract
        global $order;
         
         $confirmation = parent::confirmation();
-        
-        $payment = $this->getPayment($_SESSION['customer_id']);
-        
+
         $this->fastCheckout->setFastCheckoutFlag($this->fastCheckoutFlag);
+        $payment = $this->getPayment($_SESSION['customer_id']);
         
         $script = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>'
                 . '<script type="text/javascript">'
@@ -82,7 +82,7 @@ class paymillElv extends paymill_abstract
                 . 'var paymill_elv_iban = "' . utf8_decode($payment['iban']) . '";'
                 . 'var paymill_elv_bic = "' . utf8_decode($payment['bic']) . '";'
                 . 'var paymill_elv_account = "' . $payment['account'] . '";'
-                . 'var paymill_elv_fastcheckout = ' . $this->fastCheckout->canCustomerFastCheckoutElv($_SESSION['customer_id']) . ';'
+                . 'var paymill_elv_fastcheckout = ' . ($this->fastCheckout->canCustomerFastCheckoutElv($_SESSION['customer_id']) ? 'true' : 'false') . ';'
                 . 'var checkout_payment_link = "' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false). '&payment_error=' . $this->code . '&error=' . '";'
                 . '</script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/elv.js"></script>';

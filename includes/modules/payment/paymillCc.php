@@ -9,17 +9,18 @@ class paymillCc extends paymill_abstract
         parent::paymill_abstract();
         global $order;
         $this->code = 'paymillCc';
-        $this->description = "<p style='font-weight: bold; text-align: center'>$this->version</p>";
         $this->title = MODULE_PAYMENT_PAYMILL_CC_TEXT_TITLE;
         $this->public_title = MODULE_PAYMENT_PAYMILL_CC_TEXT_PUBLIC_TITLE;
+        $this->privateKey = trim(MODULE_PAYMENT_PAYMILL_CC_PRIVATEKEY);
+        $this->fastCheckout = new FastCheckout($this->privateKey);
         
         if (defined('MODULE_PAYMENT_PAYMILL_CC_STATUS')) {
             $this->enabled = ((MODULE_PAYMENT_PAYMILL_CC_STATUS == 'True') ? true : false);
             $this->sort_order = MODULE_PAYMENT_PAYMILL_CC_SORT_ORDER;
-            $this->privateKey = trim(MODULE_PAYMENT_PAYMILL_CC_PRIVATEKEY);
             $this->logging = ((MODULE_PAYMENT_PAYMILL_CC_LOGGING == 'True') ? true : false);
             $this->publicKey = MODULE_PAYMENT_PAYMILL_CC_PUBLICKEY;
             $this->fastCheckoutFlag = ((MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT == 'True') ? true : false);
+            $this->fastCheckout->setFastCheckoutFlag($this->fastCheckoutFlag);
             $this->payments = new Services_Paymill_Payments(trim($this->privateKey), $this->apiUrl);
             $this->clients = new Services_Paymill_Clients(trim($this->privateKey), $this->apiUrl);
             if ((int) MODULE_PAYMENT_PAYMILL_CC_ORDER_STATUS_ID > 0) {
@@ -51,7 +52,7 @@ class paymillCc extends paymill_abstract
             'card_type' => '',
         );
         
-        if ($this->fastCheckout->hasCcPaymentId($userId)) {
+        if ($this->fastCheckout->canCustomerFastCheckoutCc($userId)) {
             $data = $this->fastCheckout->loadFastCheckoutData($userId);
             $payment = $this->payments->getOne($data['paymentID_CC']);
             $payment['last4'] = '************' . $payment['last4'];
@@ -87,11 +88,10 @@ class paymillCc extends paymill_abstract
 
         for ($i=$today['year']; $i < $today['year']+10; $i++) {
             $years_array[$i] = array(strftime('%Y', mktime(0, 0, 0, 1 , 1, $i)), strftime('%Y',mktime(0, 0, 0, 1, 1, $i)));
-        } 
-        
-        $payment = $this->getPayment($_SESSION['customer_id']);
-        
+        }
+
         $this->fastCheckout->setFastCheckoutFlag($this->fastCheckoutFlag);
+        $payment = $this->getPayment($_SESSION['customer_id']);
         
         $script = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>'
                 . '<script type="text/javascript">'
@@ -110,7 +110,7 @@ class paymillCc extends paymill_abstract
                     . 'var paymill_cc_holder_val = "' . utf8_decode($payment['card_holder']) . '";'
                     . 'var paymill_cc_expiry_month_val = "' . $payment['expire_month'] . '";'
                     . 'var paymill_cc_expiry_year_val = "' . $payment['expire_year'] . '";'
-                    . 'var paymill_cc_fastcheckout = ' . $this->fastCheckout->canCustomerFastCheckoutCc($_SESSION['customer_id']) . ';'
+                    . 'var paymill_cc_fastcheckout = ' . ($this->fastCheckout->canCustomerFastCheckoutCc($_SESSION['customer_id']) ? 'true' : 'false') . ';'
                     . 'var checkout_payment_link = "' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false) . '&payment_error=' . $this->code . '&error=";'
                 . '</script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/cc.js"></script>';
