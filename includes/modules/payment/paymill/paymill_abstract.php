@@ -5,6 +5,7 @@ require_once(DIR_FS_CATALOG . 'ext/modules/payment/paymill/lib/Services/Paymill/
 require_once(DIR_FS_CATALOG . 'ext/modules/payment/paymill/lib/Services/Paymill/Payments.php');
 require_once(DIR_FS_CATALOG . 'ext/modules/payment/paymill/lib/Services/Paymill/Clients.php');
 require_once(DIR_FS_CATALOG . 'ext/modules/payment/paymill/FastCheckout.php');
+require_once(DIR_FS_CATALOG . 'ext/modules/payment/paymill/WebHooks.php');
 
 /**
  * Paymill payment plugin
@@ -174,7 +175,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         }
         
         $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
-        if (array_key_exists('clientID',$data) && $data['clientID'] != '' && $data['clientID'] != null){
+        if ($data && array_key_exists('clientID',$data) && $data['clientID'] != '' && $data['clientID'] != null){
             $this->existingClient($data);
         }
 
@@ -297,6 +298,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
 
         zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
+        $this->updateTransaction($_SESSION['paymill']['transaction_id'], $insert_id);
+
         unset($_SESSION['paymill']);
     }
 
@@ -388,8 +391,95 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
            . "PRIMARY KEY (`userID`)"
          . ")"
         );
+
+        $db->Execute(
+           "CREATE TABLE IF NOT EXISTS `".DB_PREFIX . "pi_paymill_webhooks` ("
+           . "`id` varchar(100),"
+           . "`url` varchar(150),"
+           . "`mode` varchar(100),"
+           . "`type` varchar(100),"
+           . "`created_at` varchar(100),"
+           . "PRIMARY KEY (`id`)"
+           . ")"
+        );
+
+        $this->addOrderState('Paymill [Refund]');
+        $this->addOrderState('Paymill [Chargeback]');
     }
-    
+
+
+    /**
+     * Displays the register/remove Webhook button in the payment config.
+     * @param String $type Can be either CC or ELV
+     */
+    function displayWebhookButton($type){
+        if(empty($this->privateKey) || $this->privateKey == 0){
+            return;
+        }
+
+        $webhooks = new WebHooks($this->privateKey);
+        $hooks = $webhooks->loadAllWebHooks($type);
+        $action = empty($hooks) ? 'register' : 'remove';
+        $buttonAction = 'CREATE';
+        if($action === 'remove'){
+            $buttonAction = 'REMOVE';
+        }
+
+        $buttonText = constant('MODULE_PAYMENT_PAYMILL_'.$type.'_WEBHOOKS_LINK_'.$buttonAction);
+
+        $this->description .= '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>';
+        $this->description .= '<script type="text/javascript" src="javascript/paymill_button_webhook.js"></script>';
+        $this->description .= '<p><form id="register_webhooks" method="GET">';
+        $parameters         = 'notification_action='.$action.'&type='.$type;
+        $this->description .= '<input id="listener" type="hidden" value="'.zen_href_link('paymill_webhook_listener.php',$parameters, 'SSL', false, false).'"> ';
+        $this->description .= '<button type="submit">'.$buttonText.'</button></form></p>';
+    }
+
+    /**
+     * Updates the description of target transaction by adding the prefix 'OrderID: ' followed by the order id
+     * @param String $id
+     * @param String $orderId
+     */
+    function updateTransaction($id, $orderId)
+    {
+        $this->log('Updating transaction description', '');
+        require_once(DIR_FS_CATALOG . 'ext/modules/payment/paymill/lib/Services/Paymill/Transactions.php');
+        $transactions = new Services_Paymill_Transactions($this->privateKey, $this->apiUrl);
+        $transaction = $transactions->getOne($id);
+        $description = 'OrderID: ' . $orderId . ' ' . $transaction['description'];
+        $transactions->update(array(
+                                   'id'          => $id,
+                                   'description' => $description
+                              ));
+
+
+    }
+
+    /**
+     * Adds a new order state with the given name for both german and english language sets
+     * Therefore the state name should be english
+     * @param String $stateName
+     */
+    function addOrderState($stateName)
+    {
+        global $db;
+        $check_query = $db->Execute("select orders_status_id from " . TABLE_ORDERS_STATUS . " where orders_status_name = '$stateName' limit 1");
+
+        if ($check_query->RecordCount() < 1) {
+            $status_query = $db->Execute("select max(orders_status_id) as status_id from " . TABLE_ORDERS_STATUS);
+
+            $status_id = $status_query->fields['status_id'] + 1;
+
+        } else {
+            $status_id = $check_query->fields['orders_status_id'];
+        }
+
+        $languages = zen_get_languages();
+
+        foreach ($languages as $lang) {
+            $db->Execute("REPLACE INTO " . TABLE_ORDERS_STATUS . " (orders_status_id, language_id, orders_status_name) values ('" . $status_id . "', '" . $lang['id'] . "', '".$stateName."')");
+        }
+    }
 }
 
 ?>
