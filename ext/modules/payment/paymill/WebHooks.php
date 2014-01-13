@@ -173,4 +173,24 @@ class WebHooks extends WebHooksAbstract
             $data[] = $hook;
         }
     }
+
+    /**
+     * Required the Libs WebHooks class
+     *
+     * @return void
+     */
+    function requireTransactions()
+    {
+        require_once('lib/Services/Paymill/Transactions.php');
+    }
+
+    /**
+     * Required the Libs WebHooks class
+     *
+     * @return void
+     */
+    function requireRefunds()
+    {
+        require_once('lib/Services/Paymill/Refunds.php');
+    }
 }
