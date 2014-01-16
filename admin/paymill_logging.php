@@ -42,7 +42,14 @@ while (!$data->EOF) {
     $data->MoveNext();
 }
 
-$recordCount = count($logs);
+$allEntries = $db->Execute("SELECT * FROM `". DB_PREFIX . "pi_paymill_logging`");
+$total = array();
+while (!$allEntries->EOF) {
+    array_push($total, $allEntries->fields);
+    $allEntries->MoveNext();
+}
+
+$recordCount = count($total);
 $pageCount = $recordCount / $recordLimit;
 ?>
 <!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
