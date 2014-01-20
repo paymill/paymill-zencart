@@ -114,6 +114,7 @@ class paymillCc extends paymill_abstract
                     . 'var paymill_cc_years = ' . json_encode($years_array) . ';'
                     . 'var paymill_cc_number_val = "' . $payment['last4'] . '";'
                     . 'var paymill_cc_cvc_val = "' . $payment['cvc'] . '";'
+                    . 'var paymill_cc_card_type = "' . utf8_decode($payment['card_type']) . '";'
                     . 'var paymill_cc_holder_val = "' . utf8_decode($payment['card_holder']) . '";'
                     . 'var paymill_cc_expiry_month_val = "' . $payment['expire_month'] . '";'
                     . 'var paymill_cc_expiry_year_val = "' . $payment['expire_year'] . '";'
