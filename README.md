@@ -4,7 +4,7 @@ PAYMILL - ZenCart
 # Update Note
 
 To update the ZenCart PAYMILL plugin you must reinstall the plugin to ensure 
-that all needed tables are created.
+that all needed tables are created. Please also make sure, that the admin directories content is copied into the correct path on your system.
 
 ZenCart Plugin for PAYMILL credit card and elv payments
 
