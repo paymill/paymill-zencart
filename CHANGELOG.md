@@ -1,10 +1,12 @@
 #Release Notes
 ##1.3.0
-- Added additional validation for payments and clients during fast checkout
-- Added version number to configuration
-- Removed PAYMILL Label
-- Implemented optional SEPA direct debit form. only payments from germany are supported
-- Added snippets for bridge errors
+* Added SEPA Payment Form for german Direct Debit
+* Added WebHooks. WebHooks will automatically synch your shops order states on refund or chargeback events
+* Updated Fast Checkout
+* Removed Paymill Label
+* Added version number to payment configuration
+* Fixed Log view
+* Added improved feedback on errors for both bridge and api errors
 
 ##1.2.1
 - Added Improved Error Feedback

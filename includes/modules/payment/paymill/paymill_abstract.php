@@ -16,7 +16,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     var $code, $title, $description = '', $enabled, $privateKey, $logging, $fastCheckoutFlag, $label, $publicKey;
     var $bridgeUrl = 'https://bridge.paymill.com/';
     var $apiUrl = 'https://api.paymill.com/v2/';
-    var $version = '1.2.1';
+    var $version = '1.3.0';
     var $api_version = '2';
     
     /**
@@ -413,7 +413,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
      * @param String $type Can be either CC or ELV
      */
     function displayWebhookButton($type){
-        if(empty($this->privateKey) || $this->privateKey == 0){
+        if(empty($this->privateKey)){
             return;
         }
 
