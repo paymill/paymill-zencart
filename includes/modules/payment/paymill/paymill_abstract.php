@@ -219,16 +219,15 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     
     function fastCheckout()
     {
-        if ($this->fastCheckout->canCustomerFastCheckoutCc($_SESSION['customer_id']) === 'true' && $this->code === 'paymillCc') {
-            $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
+        $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
+
+        if ($this->fastCheckout->canCustomerFastCheckoutCc($_SESSION['customer_id']) && $this->code === 'paymillCc') {
             if (!empty($data['paymentID_CC'])) {
                 $this->paymentProcessor->setPaymentId($data['paymentID_CC']);
             }
         }
         
-        if ($this->fastCheckout->canCustomerFastCheckoutElv($_SESSION['customer_id']) === 'true' && $this->code === 'paymillElv') {
-            $data = $this->fastCheckout->loadFastCheckoutData($_SESSION['customer_id']);
-            
+        if ($this->fastCheckout->canCustomerFastCheckoutElv($_SESSION['customer_id']) && $this->code === 'paymillElv') {
             if (!empty($data['paymentID_ELV'])) {
                 $this->paymentProcessor->setPaymentId($data['paymentID_ELV']);
             }
