@@ -8,6 +8,9 @@
 * Fixed Log view
 * Added improved feedback on errors for both bridge and api errors
 
+##1.2.2
+- update fast checkout
+
 ##1.2.1
 - Added Improved Error Feedback
 - Added Changelog
