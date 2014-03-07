@@ -103,10 +103,10 @@ class paymillCc extends paymill_abstract
         $script = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>'
                 . '<script type="text/javascript">'
                     . 'var cclogging = "' . MODULE_PAYMENT_PAYMILL_CC_LOGGING . '";'
-                    . 'var cc_expiery_invalid = "' . MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_EXPIRY_INVALID . '";'
-                    . 'var cc_owner_invalid = "' . MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_OWNER_INVALID . '";'
-                    . 'var cc_card_number_invalid = "' . MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_CARDNUMBER_INVALID . '";'
-                    . 'var cc_cvc_number_invalid = "' . MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_CVC_INVALID . '";'
+                    . 'var cc_expiery_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_EXPIRY_INVALID)) . '";'
+                    . 'var cc_owner_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_OWNER_INVALID)) . '";'
+                    . 'var cc_card_number_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_CARDNUMBER_INVALID)) . '";'
+                    . 'var cc_cvc_number_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_CVC_INVALID)) . '";'
                     . 'var brand = "' . $payment['card_type'] . '";'
                     . 'var paymill_total = ' . json_encode((int) $_SESSION['paymill']['amount']) . ';'
                     . 'var paymill_currency = ' . json_encode(strtoupper($order->info['currency'])) . ';'
@@ -181,19 +181,70 @@ class paymillCc extends paymill_abstract
         global $db;
 
         parent::install();
-        
+
         include(DIR_FS_CATALOG . DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/payment/paymillCc.php');
-        
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_CC_STATUS_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_STATUS_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_STATUS', 'True', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_CC_WEBHOOKS_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_WEBHOOKS_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_WEBHOOKS', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_CC_SORT_ORDER_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_SORT_ORDER_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_SORT_ORDER', '0', '6', '0', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_CC_PRIVATEKEY_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_PRIVATEKEY_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_PRIVATEKEY', '0', '6', '0', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_CC_PUBLICKEY_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_PUBLICKEY_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_PUBLICKEY', '0', '6', '0', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) values ('" . MODULE_PAYMENT_PAYMILL_CC_ORDER_STATUS_ID_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_ORDER_STATUS_ID_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_ORDER_STATUS_ID', '0',  '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_CC_LOGGING_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_LOGGING_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_LOGGING', 'False', '6', '0', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) values ('" . MODULE_PAYMENT_PAYMILL_CC_TRANS_ORDER_STATUS_ID_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_TRANS_ORDER_STATUS_ID_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_TRANSACTION_ORDER_STATUS_ID', '" . $this->getOrderStatusTransactionID() . "', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, use_function, set_function, date_added) values ('" . MODULE_PAYMENT_PAYMILL_CC_ZONE_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_CC_ZONE_DESC . "', 'MODULE_PAYMENT_PAYMILL_CC_ZONE', '0', '6', '2', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_STATUS_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_STATUS_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_STATUS', 'True', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_FASTCHECKOUT', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_WEBHOOKS_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_WEBHOOKS_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_WEBHOOKS', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_SORT_ORDER_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_SORT_ORDER_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_SORT_ORDER', '0', '6', '0', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_PRIVATEKEY_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_PRIVATEKEY_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_PRIVATEKEY', '0', '6', '0', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_PUBLICKEY_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_PUBLICKEY_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_PUBLICKEY', '0', '6', '0', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) values ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_ORDER_STATUS_ID_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_ORDER_STATUS_ID_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_ORDER_STATUS_ID', '0',  '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_LOGGING_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_LOGGING_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_LOGGING', 'False', '6', '0', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) values ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_TRANS_ORDER_STATUS_ID_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_TRANS_ORDER_STATUS_ID_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_TRANSACTION_ORDER_STATUS_ID', '" .
+                     $this->getOrderStatusTransactionID() .
+                     "', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, use_function, set_function, date_added) values ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_ZONE_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_CC_ZONE_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_CC_ZONE', '0', '6', '2', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
     }
 
     function keys()

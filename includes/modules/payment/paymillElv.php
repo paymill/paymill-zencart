@@ -78,11 +78,11 @@ class paymillElv extends paymill_abstract
                 . '<script type="text/javascript">'
                 . 'var elvlogging = "' . MODULE_PAYMENT_PAYMILL_ELV_LOGGING . '";'
                 . 'var sepaActive ="' . MODULE_PAYMENT_PAYMILL_ELV_SEPA .'";'
-                . 'var elv_account_number_invalid = "' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT_INVALID . '";'
-                . 'var elv_bank_code_invalid = "' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_BANKCODE_INVALID . '";'
-                . 'var elv_bank_owner_invalid = "' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT_HOLDER_INVALID . '";'
-                . 'var elv_iban_invalid = "' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_IBAN_INVALID . '";'
-                . 'var elv_bic_invalid = "' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_BIC_INVALID . '";'
+                . 'var elv_account_number_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT_INVALID)) . '";'
+                . 'var elv_bank_code_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_ELV_TEXT_BANKCODE_INVALID)) . '";'
+                . 'var elv_bank_owner_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT_HOLDER_INVALID)) . '";'
+                . 'var elv_iban_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_ELV_TEXT_IBAN_INVALID)) . '";'
+                . 'var elv_bic_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_ELV_TEXT_BIC_INVALID)) . '";'
                 . 'var paymill_account_name = ' . json_encode($order->billing['firstname'] . ' ' . $order->billing['lastname']) . ';'
                 . 'var paymill_elv_code = "' . $payment['code'] . '";'
                 . 'var paymill_elv_holder = "' . utf8_decode($payment['holder']) . '";'
@@ -163,20 +163,76 @@ class paymillElv extends paymill_abstract
         global $db;
 
         parent::install();
-        
+
         @include(DIR_FS_CATALOG . DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/payment/paymillElv.php');
 
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_ELV_STATUS_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_STATUS_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_STATUS', 'True', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_ELV_FASTCHECKOUT_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_FASTCHECKOUT_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_FASTCHECKOUT', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_ELV_SEPA_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_SEPA_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_SEPA', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_ELV_SORT_ORDER_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_SORT_ORDER_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_SORT_ORDER', '0', '6', '0', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY', '0', '6', '0', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY', '0', '6', '0', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) values ('" . MODULE_PAYMENT_PAYMILL_ELV_ORDER_STATUS_ID_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_ORDER_STATUS_ID_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_ORDER_STATUS_ID', '0',  '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" . MODULE_PAYMENT_PAYMILL_ELV_LOGGING_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_LOGGING_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_LOGGING', 'False', '6', '0', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) values ('" . MODULE_PAYMENT_PAYMILL_ELV_TRANS_ORDER_STATUS_ID_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_TRANS_ORDER_STATUS_ID_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_TRANSACTION_ORDER_STATUS_ID', '" . $this->getOrderStatusTransactionID() . "', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
-        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, use_function, set_function, date_added) values ('" . MODULE_PAYMENT_PAYMILL_ELV_ZONE_TITLE . "', '" . MODULE_PAYMENT_PAYMILL_ELV_ZONE_DESC . "', 'MODULE_PAYMENT_PAYMILL_ELV_ZONE', '0', '6', '2', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_STATUS_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_STATUS_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_STATUS', 'True', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_FASTCHECKOUT_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_FASTCHECKOUT_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_FASTCHECKOUT', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_SEPA_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_SEPA_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_SEPA', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_SORT_ORDER_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_SORT_ORDER_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_SORT_ORDER', '0', '6', '0', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY', '0', '6', '0', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY', '0', '6', '0', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) values ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_ORDER_STATUS_ID_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_ORDER_STATUS_ID_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_ORDER_STATUS_ID', '0',  '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_LOGGING_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_LOGGING_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_LOGGING', 'False', '6', '0', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) values ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_TRANS_ORDER_STATUS_ID_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_TRANS_ORDER_STATUS_ID_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_TRANSACTION_ORDER_STATUS_ID', '" .
+                     $this->getOrderStatusTransactionID() .
+                     "', '6', '0', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
+
+        $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
+                     " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, use_function, set_function, date_added) values ('" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_ZONE_TITLE) . "', '" .
+                     mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_ZONE_DESC) .
+                     "', 'MODULE_PAYMENT_PAYMILL_ELV_ZONE', '0', '6', '2', 'zen_get_zone_class_title', 'zen_cfg_pull_down_zone_classes(', now())");
     }
 
     function keys()
