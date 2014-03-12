@@ -77,18 +77,18 @@ class paymillCc extends paymill_abstract
         $confirmation = parent::confirmation();        
         
         $months_array     = array();
-        $months_array[1]  = array('01', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_JANUARY)));
-        $months_array[2]  = array('02', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_FEBRUARY)));
-        $months_array[3]  = array('03', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_MARCH)));
-        $months_array[4]  = array('04', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_APRIL)));
-        $months_array[5]  = array('05', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_MAY)));
-        $months_array[6]  = array('06', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_JUNE)));
-        $months_array[7]  = array('07', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_JULY)));
-        $months_array[8]  = array('08', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_AUGUST)));
-        $months_array[9]  = array('09', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_SEPTEMBER)));
-        $months_array[10] = array('10', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_OCTOBER)));
-        $months_array[11] = array('11', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_NOVEMBER)));
-        $months_array[12] = array('12', utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_DECEMBER)));
+        $months_array[1]  = array('01', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_JANUARY);
+        $months_array[2]  = array('02', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_FEBRUARY);
+        $months_array[3]  = array('03', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_MARCH);
+        $months_array[4]  = array('04', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_APRIL);
+        $months_array[5]  = array('05', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_MAY);
+        $months_array[6]  = array('06', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_JUNE);
+        $months_array[7]  = array('07', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_JULY);
+        $months_array[8]  = array('08', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_AUGUST);
+        $months_array[9]  = array('09', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_SEPTEMBER);
+        $months_array[10] = array('10', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_OCTOBER);
+        $months_array[11] = array('11', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_NOVEMBER);
+        $months_array[12] = array('12', MODULE_PAYMENT_PAYMILL_CC_TEXT_MONTH_DECEMBER);
 
         $today = getdate(); 
         $years_array = array();
@@ -103,10 +103,10 @@ class paymillCc extends paymill_abstract
         $script = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>'
                 . '<script type="text/javascript">'
                     . 'var cclogging = "' . MODULE_PAYMENT_PAYMILL_CC_LOGGING . '";'
-                    . 'var cc_expiery_invalid = "' .  html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_EXPIRY_INVALID) . '";'
-                    . 'var cc_owner_invalid = "' .  html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_OWNER_INVALID) . '";'
-                    . 'var cc_card_number_invalid = "' .  html_entity_decode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_CARDNUMBER_INVALID)) . '";'
-                    . 'var cc_cvc_number_invalid = "' .  html_entity_decode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_CVC_INVALID)) . '";'
+                    . 'var cc_expiery_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_EXPIRY_INVALID)) . '";'
+                    . 'var cc_owner_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_OWNER_INVALID)) . '";'
+                    . 'var cc_card_number_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_CARDNUMBER_INVALID)) . '";'
+                    . 'var cc_cvc_number_invalid = "' .  utf8_encode(html_entity_decode(MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_CVC_INVALID)) . '";'
                     . 'var brand = "' . $payment['card_type'] . '";'
                     . 'var paymill_total = ' . json_encode((int) $_SESSION['paymill']['amount']) . ';'
                     . 'var paymill_currency = ' . json_encode(strtoupper($order->info['currency'])) . ';'
