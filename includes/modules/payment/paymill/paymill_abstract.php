@@ -106,7 +106,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         }
 
         if($error !== ''){
-            $error_text['error'] = utf8_decode(constant('PAYMILL_'.$error));
+            $error_text['error'] = utf8_decode(constant('PAYMILL_'.strtoupper($error)));
         }
 
         return $error_text;
