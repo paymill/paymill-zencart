@@ -411,7 +411,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
      * Displays the register/remove Webhook button in the payment config.
      * @param String $type Can be either CC or ELV
      */
-    function displayWebhookButton($type){
+    function displayWebhookButton($type)
+    {
         if(empty($this->privateKey)){
             return;
         }
