@@ -148,27 +148,29 @@ function PaymillAddCardDetection()
         } else {
             suffix = '-temp';
         }
-
-        switch (brand) {
-            case 'unknown':
-                $('#paymill-card-number').removeClass();
-                $('#paymill-card-number').addClass('form-row-paymill');
-                break;
-            case 'carte-bleue':
-            case 'maestro':
-            case 'dankort':
-            case 'carta-si':
-            case 'discover':
-            case 'jcb':
-            case 'amex':
-            case 'china-unionpay':
-            case 'diners-club':
-            case 'mastercard':
-            case 'visa':
-                $('#paymill-card-number').removeClass();
-                $('#paymill-card-number').addClass('form-row-paymill ' + cssClass + brand + suffix);
-                break;
-        }
+		
+		if (logos[brand]) {
+			switch (brand) {
+				case 'unknown':
+					$('#paymill-card-number').removeClass();
+					$('#paymill-card-number').addClass('form-row-paymill');
+					break;
+				case 'carte-bleue':
+				case 'maestro':
+				case 'dankort':
+				case 'carta-si':
+				case 'discover':
+				case 'jcb':
+				case 'amex':
+				case 'china-unionpay':
+				case 'diners-club':
+				case 'mastercard':
+				case 'visa':
+					$('#paymill-card-number').removeClass();
+					$('#paymill-card-number').addClass('form-row-paymill ' + cssClass + brand + suffix);
+					break;
+			}
+		}
     });
 }
 

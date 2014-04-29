@@ -180,7 +180,7 @@ class paymillElv extends paymill_abstract
                 mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS_TITLE) . "', '" .
                 mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS_DESC) .
                 "', 'MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS', 'False', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
-
+        
         $db->Execute("INSERT INTO " . TABLE_CONFIGURATION .
                 " (configuration_title, configuration_description, configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('" .
                 mysql_real_escape_string(MODULE_PAYMENT_PAYMILL_ELV_SORT_ORDER_TITLE) . "', '" .
@@ -232,7 +232,6 @@ class paymillElv extends paymill_abstract
             'MODULE_PAYMENT_PAYMILL_ELV_STATUS',
             'MODULE_PAYMENT_PAYMILL_ELV_FASTCHECKOUT',
             'MODULE_PAYMENT_PAYMILL_ELV_WEBHOOKS',
-            'MODULE_PAYMENT_PAYMILL_ELV_SEPA',
             'MODULE_PAYMENT_PAYMILL_ELV_PRIVATEKEY',
             'MODULE_PAYMENT_PAYMILL_ELV_PUBLICKEY',
             'MODULE_PAYMENT_PAYMILL_ELV_ORDER_STATUS_ID',
