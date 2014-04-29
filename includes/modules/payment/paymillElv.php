@@ -93,6 +93,7 @@ class paymillElv extends paymill_abstract
                     . 'var checkout_payment_link = "' . zen_href_link(FILENAME_CHECKOUT_PAYMENT, 'step=step2', 'SSL', true, false) . '&payment_error=' . $this->code . '&error=' . '";'
                 . '</script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/Iban.js"></script>'
+                . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/Sepa.js"></script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/elv.js"></script>';
         
         $script .= $this->getJavascript();
