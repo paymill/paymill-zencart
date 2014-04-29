@@ -124,17 +124,13 @@ class paymillCc extends paymill_abstract
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/BrandDetection.js"></script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/cc.js"></script>';
 
-        array_push($confirmation['fields'], 
-            array(
-                'field' => $script
-            )
-        );
+        $script .= $this->getJavascript();
         
-       array_push($confirmation['fields'], 
-            array(
-                'title' => '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_OWNER . '</div>',
-                'field' => '<span id="card-owner-field"></span><span id="card-owner-error" class="paymill-error"></span>'
-            )
+        array_push($confirmation['fields'], 
+             array(
+                 'title' => $script . '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_CC_TEXT_CREDITCARD_OWNER . '</div>',
+                 'field' => '<span id="card-owner-field"></span><span id="card-owner-error" class="paymill-error"></span>'
+             )
         );
                 
         array_push($confirmation['fields'], 

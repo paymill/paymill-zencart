@@ -128,22 +128,14 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     {
         global $order;
         $_SESSION['paymill']['amount'] = $this->format_raw($order->info['total']);
-        return array(
-            'fields' => array(
-                array(
-                    'title' => '',
-                    'field' => '<link rel="stylesheet" type="text/css" href="ext/modules/payment/paymill/public/css/paymill.css" />'
-                ),
-                array(
-                    'title' => '',
-                    'field' => '<script type="text/javascript">var PAYMILL_PUBLIC_KEY = "' . $this->publicKey . '";</script>'
-                ),
-                array(
-                    'title' => '',
-                    'field' => '<script type="text/javascript" src="' . $this->bridgeUrl . '"></script>'
-                ),
-            )
-        );
+        return array('fields' => array());
+    }
+    
+    function getJavascript()
+    {
+        return '<link rel="stylesheet" type="text/css" href="ext/modules/payment/paymill/public/css/paymill.css" />'
+             . '<script type="text/javascript">var PAYMILL_PUBLIC_KEY = "' . $this->publicKey . '";</script>'
+             . '<script type="text/javascript" src="' . $this->bridgeUrl . '"></script>';
     }
 
     function process_button()

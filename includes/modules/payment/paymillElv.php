@@ -94,18 +94,13 @@ class paymillElv extends paymill_abstract
                 . '</script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/Iban.js"></script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/elv.js"></script>';
+        
+        $script .= $this->getJavascript();
 
         array_push(
             $confirmation['fields'], 
             array(
-                'field' => $script
-            )
-        );
-
-        array_push(
-            $confirmation['fields'], 
-            array(
-                'title' => '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT_HOLDER . '</div>',
+                'title' => $script . '<div class="paymill-label-field">' . MODULE_PAYMENT_PAYMILL_ELV_TEXT_ACCOUNT_HOLDER . '</div>',
                 'field' => '<span id="account-name-field"></span><span id="elv-holder-error" class="paymill-error"></span>'
             )
         );
