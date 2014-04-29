@@ -149,7 +149,7 @@ function PaymillAddCardDetection()
             suffix = '-temp';
         }
 		
-		if (logos[brand]) {
+		if (logos[brand] || allBrandsDisabled) {
 			switch (brand) {
 				case 'unknown':
 					$('#paymill-card-number').removeClass();

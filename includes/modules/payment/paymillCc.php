@@ -132,11 +132,77 @@ class paymillCc extends paymill_abstract
                     . "logos['jcb'] =  " . strtolower(MODULE_PAYMENT_PAYMILL_CC_JCB) . ";"
                     . "logos['mastercard'] =  " . strtolower(MODULE_PAYMENT_PAYMILL_CC_MASTERCARD) . ";"
                     . "logos['visa'] =  " . strtolower(MODULE_PAYMENT_PAYMILL_CC_VISA) . ";"
+                    . "var allBrandsDisabled = logos['amex'] && logos['carta-si'] && logos['dankort'] && logos['carte-bleue'] && logos['discover'] && logos['diners-club'] && logos['unionpay'] && logos['maestro'] && logos['jcb'] && logos['mastercard'] && logos['visa'];"
                 . '</script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/BrandDetection.js"></script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/cc.js"></script>';
 
         $script .= $this->getJavascript();
+        
+        if (!((MODULE_PAYMENT_PAYMILL_CC_AMEX === 'False') 
+            && (MODULE_PAYMENT_PAYMILL_CC_CARTASI === 'False') 
+            && (MODULE_PAYMENT_PAYMILL_CC_DANKORT === 'False') 
+            && (MODULE_PAYMENT_PAYMILL_CC_CARTEBLEUE === 'False') 
+            && (MODULE_PAYMENT_PAYMILL_CC_DISCOVER === 'False') 
+            && (MODULE_PAYMENT_PAYMILL_CC_DINERSCLUB === 'False') 
+            && (MODULE_PAYMENT_PAYMILL_CC_UNIONPAY === 'False') 
+            && (MODULE_PAYMENT_PAYMILL_CC_MAESTRO === 'False') 
+            && (MODULE_PAYMENT_PAYMILL_CC_JCB === 'False') 
+            && (MODULE_PAYMENT_PAYMILL_CC_MASTERCARD === 'False')
+            && (MODULE_PAYMENT_PAYMILL_CC_VISA === 'False'))
+        ) {
+            $logos = '';
+            if (MODULE_PAYMENT_PAYMILL_CC_AMEX === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_amex.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_CARTASI === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_carta-si.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_DANKORT === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_dankort.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_CARTEBLEUE === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_carte-bleue.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_DISCOVER === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_discover.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_DINERSCLUB === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_dinersclub.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_UNIONPAY === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_unionpay.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_MAESTRO === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_maestro.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_JCB === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_jcb.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_MASTERCARD === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_mastercard.png" alt="American Express"/>';
+            }
+            
+            if (MODULE_PAYMENT_PAYMILL_CC_VISA === 'True') {
+                $logos .= '<img src="ext/modules/payment/paymill/public/images/32x20_visa.png" alt="American Express"/>';
+            }
+            
+            array_push($confirmation['fields'], 
+                array(
+                    'title' => '',
+                    'field' => $logos
+                )
+            );
+        }
         
         array_push($confirmation['fields'], 
              array(
