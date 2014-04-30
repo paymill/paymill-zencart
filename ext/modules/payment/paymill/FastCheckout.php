@@ -30,7 +30,7 @@ class FastCheckout extends FastCheckoutAbstract
         global $db;
         $data = $db->Execute($sql);
         if($data->fields === null){
-            return false;
+            return array();
         }
         return $data->fields;
 
