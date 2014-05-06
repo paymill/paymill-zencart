@@ -29,7 +29,7 @@ $(document).ready(function () {
                 if(isSepa()){
                     elvErrorFlag = PaymillValidateSepaForm();
 					var sepa = new Sepa('abc123');
-					sepa.popUp('paymillCallback')
+					sepa.popUp('paymillCallback');
                 } else {
                     elvErrorFlag = PaymillValidateOldElvForm();
                 }

@@ -132,7 +132,7 @@ class paymillCc extends paymill_abstract
                     . "logos['jcb'] =  " . strtolower(MODULE_PAYMENT_PAYMILL_CC_JCB) . ";"
                     . "logos['mastercard'] =  " . strtolower(MODULE_PAYMENT_PAYMILL_CC_MASTERCARD) . ";"
                     . "logos['visa'] =  " . strtolower(MODULE_PAYMENT_PAYMILL_CC_VISA) . ";"
-                    . "var allBrandsDisabled = logos['amex'] && logos['carta-si'] && logos['dankort'] && logos['carte-bleue'] && logos['discover'] && logos['diners-club'] && logos['unionpay'] && logos['maestro'] && logos['jcb'] && logos['mastercard'] && logos['visa'];"
+                    . "var allBrandsDisabled = !logos['amex'] && !logos['carta-si'] && !logos['dankort'] && !logos['carte-bleue'] && !logos['discover'] && !logos['diners-club'] && !logos['unionpay'] && !logos['maestro'] && !logos['jcb'] && !logos['mastercard'] && !logos['visa'];"
                 . '</script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/BrandDetection.js"></script>'
                 . '<script type="text/javascript" src="ext/modules/payment/paymill/public/javascript/cc.js"></script>';
