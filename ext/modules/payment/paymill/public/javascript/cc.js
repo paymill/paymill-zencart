@@ -114,7 +114,7 @@ function PaymillCreateCCForm()
             break;
         case 'china_union_pay':
             $('#paymill-card-number').removeClass();
-            $('#paymill-card-number').addClass('form-row-paymill ' + cssClass + 'unionpay');
+            $('#paymill-card-number').addClass('form-row-paymill ' + cssClass + 'china-unionpay');
             break;
         case 'diners':
         case 'dankort':
