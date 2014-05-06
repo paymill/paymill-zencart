@@ -1,4 +1,5 @@
 var isCcSubmitted = false;
+var oldFieldData;
 $(document).ready(function (){
 
     if (typeof $.fn.prop !== 'function') {
@@ -13,12 +14,17 @@ $(document).ready(function (){
 
     PaymillCreateCCForm();
     PaymillAddCardDetection();
+	oldFieldData = getFormData();
 
     $('#checkout_confirmation').submit(function (event)
     {
         event.preventDefault();
+		var newFieldData = getFormData();
         if (!isCcSubmitted) {
-            if (!paymill_cc_fastcheckout) {
+            if (oldFieldData.toString() === newFieldData.toString()) {
+                $('#paymill_form').append('<input type="hidden" name="paymill_token" value="dummyToken" />');
+                $('#paymill_form').submit();
+            } else {
                 hideErrorBoxes();
                 var ccErrorFlag = true;
 
@@ -67,15 +73,26 @@ $(document).ready(function (){
                 }, PaymillCcResponseHandler);
 
                 return false;
-            } else {
-                $('#paymill_form').append('<input type="hidden" name="paymill_token" value="dummyToken" />');
-                $('#paymill_form').submit();
             }
         }
     });
-
-    PaymillAddCCFormFokusActions();
 });
+	
+function getFormData(ignoreEmptyValues) 
+{
+	var array = new Array();
+	$('#checkoutConfirmDefault :input').not('[type=hidden]').each(function() 
+	{
+
+		if ($(this).val() === "" && ignoreEmptyValues) {
+			return;
+		}
+
+		array.push($(this).val());
+	});
+
+	return array;
+}
 
 function PaymillCreateCCForm()
 {
@@ -139,7 +156,7 @@ function PaymillAddCardDetection()
         $('#paymill-card-number').removeClass();
         $('#paymill-card-number').addClass('form-row-paymill');
         var cardNumber = $('#paymill-card-number').val();
-        var detector = new BrandDetection();
+        var detector = new PaymillBrandDetection();
         var brand = detector.detect(cardNumber);
         console.log("Brand detected: " + brand);
 
@@ -171,30 +188,6 @@ function PaymillAddCardDetection()
 					break;
 			}
 		}
-    });
-}
-
-function PaymillAddCCFormFokusActions()
-{
-    $('#paymill-card-number').focus(function() {
-        paymill_cc_fastcheckout = false;
-    });
-
-    $('#paymill-card-expiry-month').focus(function() {
-        paymill_cc_fastcheckout = false;
-    });
-
-    $('#paymill-card-expiry-year').focus(function() {
-        paymill_cc_fastcheckout = false;
-    });
-
-    $('#paymill-card-cvc').focus(function() {
-        paymill_cc_fastcheckout = false;
-        $('#paymill-card-cvc').val('');
-    });
-
-    $('#paymill-card-owner').focus(function() {
-        paymill_cc_fastcheckout = false;
     });
 }
 

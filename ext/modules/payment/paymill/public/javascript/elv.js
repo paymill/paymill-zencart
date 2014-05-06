@@ -1,6 +1,9 @@
 var isElvSubmitted = false;
 var paymillCallback;
+var paymillCallbackFastCheckout;
+var oldFieldData;
 $(document).ready(function () {
+	
     if (typeof $.fn.prop !== 'function') {
         $.fn.prop = function(name, value) {
             if (typeof value === 'undefined') {
@@ -8,15 +11,20 @@ $(document).ready(function () {
             } else {
                 return this.attr(name, value);
             }
-        }
+        };
     }
 
     PaymillCreateElvForm();
+	oldFieldData = getFormData();
 
     $('#checkout_confirmation').submit(function (event) {
         event.preventDefault();
+		var newFieldData = getFormData();
+		var sepa = new Sepa('abc123');
         if (!isElvSubmitted) {
-            if (!paymill_elv_fastcheckout) {
+            if (oldFieldData.toString() === newFieldData.toString()) {
+				sepa.popUp('paymillCallbackFastCheckout');
+            } else {
                 hideErrorBoxes();
                 var elvErrorFlag = true;
 
@@ -28,27 +36,41 @@ $(document).ready(function () {
 
                 if(isSepa()){
                     elvErrorFlag = PaymillValidateSepaForm();
-					var sepa = new Sepa('abc123');
+					if (!elvErrorFlag) {
+						return elvErrorFlag;
+					}
+					
 					sepa.popUp('paymillCallback');
                 } else {
                     elvErrorFlag = PaymillValidateOldElvForm();
+					if (!elvErrorFlag) {
+						return elvErrorFlag;
+					}
                 }
 
-                if (!elvErrorFlag) {
-                    return elvErrorFlag;
-                }
 
                 PaymillCreateElvToken();
 
                 return false;
-            } else {
-                $('#paymill_form').html('<input type="hidden" name="paymill_token" value="dummyToken" />').submit();
             }
         }
     });
-
-    PaymillAddElvFormFokusActions();
 });
+
+function getFormData(ignoreEmptyValues) 
+{
+	var array = new Array();
+	$('#checkoutConfirmDefault :input').not('[type=hidden]').each(function() 
+	{
+		if ($(this).val() === "" && ignoreEmptyValues) {
+			return;
+		}
+
+		array.push($(this).val());
+	});
+
+	return array;
+}
 
 paymillCallback = function(success)
 {
@@ -59,10 +81,22 @@ paymillCallback = function(success)
             accountholder: $('#paymill-bank-owner').val()
         }, PaymillElvResponseHandler);
 	} else {
+		isElvSubmitted = false;
 		$("#elv-holder-error").text('paymill_invalid_mandate_reference');
 		$("#elv-holder-error").css('display', 'block');
 	}
-}
+};
+
+paymillCallbackFastCheckout = function(success)
+{
+	if (success) {
+		$('#paymill_form').html('<input type="hidden" name="paymill_token" value="dummyToken" />').submit();
+	} else {
+		isElvSubmitted = false;
+		$("#elv-holder-error").text('paymill_invalid_mandate_reference');
+		$("#elv-holder-error").css('display', 'block');
+	}
+};
 
 function PaymillValidateSepaForm()
 {
@@ -101,7 +135,6 @@ function PaymillValidateOldElvForm()
         elvErrorFlag = false;
     }
 
-
     return elvErrorFlag;
 }
 
@@ -109,21 +142,6 @@ function isSepa()
 {
 	var reg = new RegExp(/^\D{2}/);
 	return reg.test($('#paymill-iban').val());
-}
-
-function PaymillAddElvFormFokusActions()
-{
-    $('#paymill-bank-owner').focus(function() {
-        paymill_elv_fastcheckout = false;
-    });
-
-	$('#paymill-iban').focus(function() {
-		paymill_elv_fastcheckout = false;
-	});
-
-	$('#paymill-bic').focus(function() {
-		paymill_elv_fastcheckout = false;
-	});
 }
 
 function PaymillCreateElvForm()
