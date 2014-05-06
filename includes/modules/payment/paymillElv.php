@@ -74,7 +74,7 @@ class paymillElv extends paymill_abstract
 
         $this->fastCheckout->setFastCheckoutFlag($this->fastCheckoutFlag);
         $payment = $this->getPayment($_SESSION['customer_id']);
-
+        
         $script = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>'
                 . '<script type="text/javascript">'
                     . 'var elvlogging = "' . MODULE_PAYMENT_PAYMILL_ELV_LOGGING . '";'
@@ -130,20 +130,6 @@ class paymillElv extends paymill_abstract
         );
 
         return $confirmation;
-    }
-
-    function before_process()
-    {
-        global $order;
-        parent::before_process();
-        $dayCount = 7 * 24 * 60 * 60; 
-        $date = time() + $dayCount;
-        
-        if ($order->info['comments']) {
-            $order->info['comments'] .= "\n" . SEPA_DRAWN_TEXT . date("d.m.y", $date);
-        } else {
-            $order->info['comments'] = "\n" . SEPA_DRAWN_TEXT . date("d.m.y", $date);
-        }
     }
 
     function check()
