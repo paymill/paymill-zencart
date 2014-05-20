@@ -1,4 +1,9 @@
 #Release Notes
+## 1.5.0
+* add payment logos
+* merge elv / sepa form
+* add pre notification to email and invoice
+
 ##1.4.0
 * Added Language Support for german, english, french, italian, spanish and portuguese
 * Added improved early pan detection
