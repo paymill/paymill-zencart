@@ -1,4 +1,8 @@
 #Release Notes
+##1.6.0
+* add refund button in the order overview
+* limit the transaction description to 128 signs
+
 ## 1.5.0
 * add payment logos
 * merge elv / sepa form

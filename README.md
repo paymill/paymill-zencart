@@ -18,7 +18,14 @@ ZenCart Plugin for PAYMILL credit card and elv payments
 
 # Installation
 
-Download the following zip file and upload the extracted files in the root directory of your ZenCart shop.
+Download the following file, extract the zip file and upload the content of the copy_this folder in the root directory of your ZenCart shop.
+Take a note that the content of the admin folder must inside admin folder of you ZenCart Shop
+There is also a folder named changed_full:
+
+Inside this folder you will find the file changed_full/admin/orders.php
+
+Inside this file you will find some code between the marker "<!-- Paymill begin -->" at the beginning and "<!-- Paymill end -->"
+at the end. Find the equivalent point at your catalog/<your admin folder>/orders.php and paste the code between the paymill markers.
 
 [Get PAYMILL Zencart Plugin here](https://github.com/paymill/paymill-zencart/archive/master.zip) .
 
