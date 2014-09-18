@@ -271,7 +271,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     
     function after_process()
     {
-        global $order, $insert_id;
+        global $order, $insert_id, $db;
 
         if (get_class($this) == 'paymillCc') {
             $order_status_id = MODULE_PAYMENT_PAYMILL_CC_TRANSACTION_ORDER_STATUS_ID;
@@ -291,6 +291,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
 
         $this->updateTransaction($_SESSION['paymill']['transaction_id'], $insert_id);
 
+        $db->Execute("INSERT INTO pi_paymill_transaction (order_id, transaction_id, amount, payment_code) VALUES ('" . tep_db_prepare_input($insert_id) . "', '" . tep_db_prepare_input($_SESSION['paymill']['transaction_id']) . "', '" . (int) $this->format_raw($order->info['total']) . "', '" . tep_db_prepare_input($this->code) . "')");
+        
         unset($_SESSION['paymill']);
     }
 
@@ -394,6 +396,16 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
            . ")"
         );
 
+        $db->Execute(
+            "CREATE TABLE IF NOT EXISTS `".DB_PREFIX . "pi_paymill_transaction` ("
+            . "`order_id` varchar(100),"
+            . "`transaction_id` varchar(100),"
+            . "`amount` varchar(100),"
+            . "`payment_code` varchar(100),"
+            . "PRIMARY KEY (`order_id`)"
+            . ")"
+        );
+        
         $this->addOrderState('Paymill [Refund]');
         $this->addOrderState('Paymill [Chargeback]');
     }
