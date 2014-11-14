@@ -1,4 +1,7 @@
 #Release Notes
+##1.6.1
+* Remove transaction id from order comment
+
 ##1.6.0
 * add refund button in the order overview
 * limit the transaction description to 128 signs
