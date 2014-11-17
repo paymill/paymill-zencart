@@ -16,7 +16,7 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
     var $code, $title, $description = '', $enabled, $privateKey, $logging, $fastCheckoutFlag, $label, $publicKey;
     var $bridgeUrl = 'https://bridge.paymill.com/';
     var $apiUrl = 'https://api.paymill.com/v2/';
-    var $version = '1.6.1';
+    var $version = '1.6.2';
     var $api_version = '2';
     
     /**
@@ -284,8 +284,8 @@ class paymill_abstract extends base  implements Services_Paymill_LoggingInterfac
         $sql_data_array = array('orders_id' => $insert_id,
             'orders_status_id' => $order_status_id,
             'date_added' => 'now()',
-            'customer_notified' => '0',
-            'comments' => 'Payment approved');
+            'customer_notified' => -1,
+            'comments' => 'Transaction ID: ' . $_SESSION['paymill']['transaction_id']);
 
         zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 

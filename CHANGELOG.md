@@ -1,4 +1,7 @@
 #Release Notes
+##1.6.2
+* re add transaction id to order comment but invisible for the customer
+
 ##1.6.1
 * Remove transaction id from order comment
 
